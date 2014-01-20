@@ -38,7 +38,6 @@ public class OperatorInteractionTest {
     @Test(enabled = false)
     public void testSendKyivstar(){
         HttpClient httpclient = HttpClientBuilder.create().build();
-
         HttpPost postRequest = new HttpPost( "http://cc.goldentele.com/sms_service/cpa.phtml" );
 //        HttpPost postRequest = new HttpPost( "http://cc.goldentele.com/CPA_MULTI_XML/cpa.phtml" );
 
