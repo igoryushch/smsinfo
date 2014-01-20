@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Structure>
+<Value name="ChangesUUID">
+<Type>String</Type>
+<Data>387a02cc-11e8-11e2-88e7-d067e5eb437e</Data>
+</Value>
+<ValueTable name="StatusData">
+<Columns>
+<Column><Name>IdInternal</Name></Column>
+<Column><Name>CurrentStatus</Name></Column>
+</Columns>
+<Rows>
+<Row>
+<Value name="IdInternal">
+<Type>String</Type>
+<Data>067363fa-07c7-11e2-891f-d4ae527baec9</Data>
+</Value>
+<Value name="CurrentStatus">
+<Type>String</Type>
+<Data>delivered</Data>
+</Value>
+</Row>
+<Row>
+<Value name="IdInternal">
+<Type>String</Type>
+<Data>06736403-07c7-11e2-891f-d4ae527baec9</Data>
+</Value>
+<Value name="CurrentStatus">
+<Type>String</Type>
+<Data>delivered</Data>
+</Value>
+</Row>
+</Rows>
+</ValueTable>
+</Structure>

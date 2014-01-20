@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Structure>
+    <Value name="operation">
+        <Type>String</Type>
+        <Data>sendMessages</Data>
+    </Value>
+	<Array name="messageArray">
+		<Structure>
+			<Value name="id">
+				<Type>String</Type>
+				<Data>11111111111</Data>
+			</Value>
+			<Value name="phone">
+				<Type>String</Type>
+				<Data>0661234567</Data>
+			</Value>
+			<Value name="text">
+				<Type>String</Type>
+				<Data>FooBar</Data>
+			</Value>
+		</Structure>
+		<Structure>
+			<Value name="id">
+				<Type>String</Type>
+				<Data>121222222222</Data>
+			</Value>
+			<Value name="phone">
+				<Type>String</Type>
+				<Data>0671234567</Data>
+			</Value>
+			<Value name="text">
+				<Type>String</Type>
+				<Data>BarFoo</Data>
+			</Value>
+		</Structure>
+	</Array>
+</Structure>
