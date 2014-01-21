@@ -36,8 +36,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
 
 @ContextConfiguration
 public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
@@ -51,7 +49,7 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
     @Value("${password}")
     private String proxyPassword;
 
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void testSendKyivstar() {
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
@@ -78,18 +76,6 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
             HttpResponse response = httpClient.execute( postRequest );
 
             Assert.assertEquals( response.getStatusLine().getStatusCode(), 200 );
-            //System.out.println( IOUtils.toString( response.getEntity().getContent() ) );
-
-//            List<Map<String, String>> statuses = RequestResponceParser.getResponceStatuses( response.getEntity().getContent() );
-//
-//            String mip = "";
-//            for( Map<String, String> statusMap : statuses ) {
-//                for( Map.Entry<String, String> entry : statusMap.entrySet() ) {
-//                    mip = entry.getKey();
-//                    System.out.println( entry.getKey() + " ==> " + entry.getValue() );
-//                }
-//            }
-
             KyivstarAcceptanceResponse acceptanceResponse = getAcceptanceStatus( response );
 
             String deliveryRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -103,14 +89,7 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
 
             for( int i = 0; i < 5; i++ ) {
                 response = httpClient.execute( postRequest );
-                List<Map<String, String>> deliveryStatuses = RequestResponceParser.getDeliveryStatuses( response.getEntity().getContent() );
-
-                for( Map<String, String> statusMap : deliveryStatuses ) {
-                    for( Map.Entry<String, String> entry : statusMap.entrySet() ) {
-                        System.out.println( entry.getKey() + " ==> " + entry.getValue() );
-                    }
-                }
-
+                printKyivstarStatuses( response );
                 try {
                     Thread.sleep( 3000 );
                 } catch( InterruptedException e ) {
@@ -195,7 +174,7 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
             postRequest.addHeader( "Content-Type", "application/xml; charset=UTF-8" );
             postRequest.setEntity( entity );
             HttpResponse response = httpClient.execute( postRequest );
-            Assert.assertEquals( response.getStatusLine().getStatusCode(), "200" );
+            Assert.assertEquals( response.getStatusLine().getStatusCode(), 200 );
             System.out.println( IOUtils.toString( response.getEntity().getContent() ) );
         } catch( ClientProtocolException e ) {
             e.printStackTrace();
@@ -215,13 +194,29 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
             JAXBContext jaxbContext = JAXBContext.newInstance( KyivstarAcceptanceResponse.class );
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            KyivstarAcceptanceResponse acceptanceResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal( response.getEntity().getContent() );
-            return acceptanceResponse;
+            return (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal( response.getEntity().getContent() );
         } catch( JAXBException e ) {
             e.printStackTrace();
         } catch( IOException e ) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private void printKyivstarStatuses(HttpResponse response){
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance( KyivstarMessageStatusReport.class );
+
+            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            KyivstarMessageStatusReport messageStatusReport = (KyivstarMessageStatusReport) jaxbUnmarshaller.unmarshal( response.getEntity().getContent() );
+
+            System.out.println( "mid = " + messageStatusReport.getMid() + "  date = " + messageStatusReport.getMessageStatus().getDate()
+                    + "  status = " + messageStatusReport.getMessageStatus().getStatus() );
+
+        } catch( JAXBException e ) {
+            e.printStackTrace();
+        } catch( IOException e ) {
+            e.printStackTrace();
+        }
     }
 }
