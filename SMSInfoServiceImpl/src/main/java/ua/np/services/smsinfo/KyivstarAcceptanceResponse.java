@@ -2,6 +2,7 @@ package ua.np.services.smsinfo;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -17,10 +18,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "report",namespace="http://goldetele.com/cpa")
 public class KyivstarAcceptanceResponse {
 
-    @XmlElement
-    private KyivstarStatus status;
+    @XmlElement(name = "status")
+    private List<KyivstarAcceptanceStatus> statuses;
 
-    public KyivstarStatus getStatus() {
-        return status;
+    public List<KyivstarAcceptanceStatus> getStatuses() {
+        return statuses;
     }
 }
