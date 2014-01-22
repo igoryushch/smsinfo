@@ -12,6 +12,7 @@ package ua.np.services.smsinfo;
  */
 
 
+import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -57,34 +58,37 @@ public class KyivstarIntegrationTest extends AbstractTestNGSpringContextTests {
         postRequest.setConfig( config );
 
         try {
-//            StringEntity entity = new StringEntity( getMultiRequestStringForKyivstar() );
-            StringEntity entity = new StringEntity( getRequestStringForKyivstar( "First Test Message", "380962276147" ) );
+            StringEntity entity = new StringEntity( getMultiRequestStringForKyivstar() );
+//            StringEntity entity = new StringEntity( getRequestStringForKyivstar( "First Test Message", "380962276147" ) );
             postRequest.addHeader( "Content-Type", "application/xml; charset=UTF-8" );
 
             postRequest.setEntity( entity );
             HttpResponse response = httpClient.execute( postRequest );
 
             Assert.assertEquals( response.getStatusLine().getStatusCode(), 200 );
-            KyivstarAcceptanceResponse acceptanceResponse = getAcceptanceStatus( response );
 
-            String deliveryRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                    "<message xmlns=\"http://goldetele.com/cpa\" mid=\"" + acceptanceResponse.getStatus().getMid() + "\">" +
-                    "    <service>delivery-request</service>" +
-                    "</message>";
+            System.out.println( IOUtils.toString( response.getEntity().getContent() ));
 
-            entity = new StringEntity( deliveryRequest, "UTF-8" );
-            postRequest.addHeader( "Content-Type", "application/xml; charset=UTF-8" );
-            postRequest.setEntity( entity );
-
-            for( int i = 0; i < 5; i++ ) {
-                response = httpClient.execute( postRequest );
-                printKyivstarStatuses( response );
-                try {
-                    Thread.sleep( 3000 );
-                } catch( InterruptedException e ) {
-                    e.printStackTrace();
-                }
-            }
+//            KyivstarAcceptanceResponse acceptanceResponse = getAcceptanceStatus( response );
+//
+//            String deliveryRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+//                    "<message xmlns=\"http://goldetele.com/cpa\" mid=\"" + acceptanceResponse.getStatus().getMid() + "\">" +
+//                    "    <service>delivery-request</service>" +
+//                    "</message>";
+//
+//            entity = new StringEntity( deliveryRequest, "UTF-8" );
+//            postRequest.addHeader( "Content-Type", "application/xml; charset=UTF-8" );
+//            postRequest.setEntity( entity );
+//
+//            for( int i = 0; i < 5; i++ ) {
+//                response = httpClient.execute( postRequest );
+//                printKyivstarStatuses( response );
+//                try {
+//                    Thread.sleep( 3000 );
+//                } catch( InterruptedException e ) {
+//                    e.printStackTrace();
+//                }
+//            }
         } catch( IOException e ) {
             e.printStackTrace();
             Assert.fail( "Exception was thrown" );
@@ -124,20 +128,25 @@ public class KyivstarIntegrationTest extends AbstractTestNGSpringContextTests {
 
     private String getMultiRequestStringForKyivstar() {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                "id=<message xmlns=\"http://goldentele.com/cpa\"><login>" + operatorLogin + "</login><paswd>" + operatorPassword + "</paswd>" +
-                "<tid>1</tid>" +
-                "<sin>380962276147</sin>" +
+                "<root xmlns=\"http://goldentele.com/cpa\">" +
+                "<login>" + operatorLogin + "</login><paswd>" + operatorPassword + "</paswd>" +
                 "<service>bulk-request</service>" +
-                "<expiry>17.01.2014 16:10:15</expiry>" +
-                "<body content-type=\"text/plain\">First Test Message</body>" +
-                "</message>" +
-                "&id2=<message xmlns=\"http://goldentele.com/cpa\"><login>newmail</login><paswd>sdgf232fsaqa2</paswd>" +
+                "<expiry>22.01.2014 12:00:00</expiry>" +
                 "<tid>1</tid>" +
-                "<sin>380962276147</sin>" +
-                "<service>bulk-request</service>" +
-                "<expiry>17.01.2014 16:10:15</expiry>" +
-                "<body content-type=\"text/plain\">Second Test Message</body>" +
-                "</message>"
+                "<messages>" +
+                    "<message>" +
+                    "<IDint>0000-00001321</IDint>" +
+                    "<sin>380962276147</sin>" +
+                    "<body content-type=\"text/plain\">First Test Message</body>" +
+                    "</message>" +
+
+                    "<message>" +
+                    "<IDint>0000-00001322</IDint>" +
+                    "<sin>380962276147</sin>" +
+                    "<body content-type=\"text/plain\">Second Test Message</body>" +
+                    "</message>" +
+                "</messages>" +
+                "</root>"
                 ;
     }
 

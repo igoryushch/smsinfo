@@ -70,16 +70,16 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
         HttpPost postRequest = new HttpPost( operatorHost );
         postRequest.setConfig( config );
         String request = "<message>" +
-                "<service id=\"individual\" source = “TEST_NUMBER”/>" +
-                "<to>+380962276147</to>" +
+                "<service id=\"individual\" validity=\"+5 hour\" source = \"NovaPoshta\" uniq_key=\"12365465\"/>" +
+                "<to>380962276147</to>" +
                 "<body content-type=\"text/plain\">First Test Message</body>" +
-                "<to>+380962276147</to>" +
+                "<to>380962276147</to>" +
                 "<body content-type=\"text/plain\">Second Test Message</body>" +
                 "</message>";
 
         try {
             StringEntity entity = new StringEntity( request, "UTF-8" );
-            postRequest.addHeader( "Content-Type", "application/xml; charset=UTF-8" );
+            postRequest.addHeader( "Content-Type", "text/xml; charset=UTF-8" );
             postRequest.setEntity( entity );
             HttpResponse response = httpClient.execute( postRequest );
             Assert.assertEquals( response.getStatusLine().getStatusCode(), 200 );
