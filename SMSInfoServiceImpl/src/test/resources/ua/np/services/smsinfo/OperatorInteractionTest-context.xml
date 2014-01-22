@@ -18,7 +18,8 @@
 <!--
     <context:property-override location="SmsInfoTest.properties"/>
 -->
-    <context:property-placeholder location="proxySettings.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder location="proxySettings.properties,operatorGateway.properties" ignore-unresolvable="true"/>
+    <bean id="proxySettingsHolder" class="ua.np.services.smsinfo.ProxySettingsHolder" />
 
 <!--
     <jaxws:endpoint id="endpointSmsInfo"
