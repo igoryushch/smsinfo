@@ -1,6 +1,5 @@
 package ua.np.services.smsinfo;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlValue;
 
@@ -18,9 +17,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlRootElement(name = "status" )
 public class KyivstarAcceptanceStatus {
 
-    @XmlAttribute
     private String mid;
-    @XmlAttribute
     private String clid;
 
     @XmlValue
@@ -30,11 +27,23 @@ public class KyivstarAcceptanceStatus {
         return mid;
     }
 
-    public String getStatus() {
-        return status;
+    public void setMid( String mid ) {
+        this.mid = mid;
     }
 
     public String getClid() {
         return clid;
+    }
+
+    public void setClid( String clid ) {
+        this.clid = clid;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus( String status ) {
+        this.status = status;
     }
 }

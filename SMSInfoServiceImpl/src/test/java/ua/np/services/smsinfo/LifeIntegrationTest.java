@@ -1,6 +1,5 @@
 package ua.np.services.smsinfo;
 
-import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -13,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
@@ -39,6 +39,8 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
 
     @Value( "${lifeHost}" )
     private String operatorHost;
+    @Value( "${lifeAuthHost}" )
+    private String operatorAuthHost;
     @Value( "${lifeHostUser}" )
     private String operatorLogin;
     @Value( "${lifeHostPassword}" )
@@ -55,7 +57,7 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
                 new UsernamePasswordCredentials(proxySettingsHolder.getProxyUsername(), proxySettingsHolder.getProxyPassword()));
 
         credsProvider.setCredentials(
-                new AuthScope(operatorHost, AuthScope.ANY_PORT),
+                new AuthScope(operatorAuthHost, AuthScope.ANY_PORT),
                 new UsernamePasswordCredentials( operatorLogin, operatorPassword ));
 
         HttpClient httpClient = HttpClients.custom()
@@ -69,8 +71,9 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
 
         HttpPost postRequest = new HttpPost( operatorHost );
         postRequest.setConfig( config );
+        int uniqueKey = (int) (Math.random()*Integer.MAX_VALUE);
         String request = "<message>" +
-                "<service id=\"individual\" validity=\"+5 hour\" source = \"NovaPoshta\" uniq_key=\"12365465\"/>" +
+                "<service id=\"individual\" validity=\"+5 hour\" source = \"NovaPoshta\" uniq_key=\"" + String.valueOf( uniqueKey ) + "\"/>" +
                 "<to>380962276147</to>" +
                 "<body content-type=\"text/plain\">First Test Message</body>" +
                 "<to>380962276147</to>" +
@@ -83,7 +86,7 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
             postRequest.setEntity( entity );
             HttpResponse response = httpClient.execute( postRequest );
             Assert.assertEquals( response.getStatusLine().getStatusCode(), 200 );
-            System.out.println( IOUtils.toString( response.getEntity().getContent() ) );
+            System.out.println( EntityUtils.toString( response.getEntity() ) );
         } catch( ClientProtocolException e ) {
             e.printStackTrace();
             Assert.fail( "Exception was thrown" );

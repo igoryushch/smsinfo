@@ -79,7 +79,7 @@ public class OperatorInteractionTest extends AbstractTestNGSpringContextTests {
             KyivstarAcceptanceResponse acceptanceResponse = getAcceptanceStatus( response );
 
             String deliveryRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
-                    "<message xmlns=\"http://goldetele.com/cpa\" mid=\"" + acceptanceResponse.getStatus().getMid() + "\">" +
+                    "<message xmlns=\"http://goldetele.com/cpa\" mid=\"" + //acceptanceResponse.getStatus().getMid() + "\">" +
                     "    <service>delivery-request</service>" +
                     "</message>";
 
