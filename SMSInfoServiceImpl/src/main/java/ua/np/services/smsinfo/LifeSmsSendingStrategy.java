@@ -47,7 +47,6 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
         int i = 0;
 
         for( Map.Entry<String, String> entry : statusMap.entrySet() ){
-
             SmsRequest request = smsRequestList.get( i );
             request.setOperatorMessageId( entry.getKey() );
             request.setOperatorStatus( entry.getValue() );
@@ -55,7 +54,6 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
                 request.setStatus( "Posted" );
             }
         }
-
         return smsRequestList;
     }
 
@@ -108,7 +106,7 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
     }
 
     private String getServiceType(int smsCount){
-        return smsCount > 2 ? "individual" : "single";
+        return smsCount > 1 ? "individual" : "single";
     }
 
     private String generateUniqueKey(){
