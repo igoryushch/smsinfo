@@ -48,7 +48,7 @@ public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ProxySettingsHolder proxySettingsHolder;
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSendMessage() {
         // test life api
         CredentialsProvider credsProvider = new BasicCredentialsProvider();

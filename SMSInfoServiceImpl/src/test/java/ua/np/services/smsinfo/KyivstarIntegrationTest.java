@@ -44,7 +44,7 @@ public class KyivstarIntegrationTest extends AbstractTestNGSpringContextTests {
     @Autowired
     private ProxySettingsHolder proxySettingsHolder;
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testSendMessage() {
         HttpClient httpClient = HttpClients.custom()
                 .setDefaultCredentialsProvider(proxySettingsHolder.newProxyCredential()).build();

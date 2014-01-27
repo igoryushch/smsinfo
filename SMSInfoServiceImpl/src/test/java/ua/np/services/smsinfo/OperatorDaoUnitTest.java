@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * Date: 15.01.14
  */
 
-public class OrderDaoUnitTest {
+public class OperatorDaoUnitTest {
 
     private EntityManager mockEntityManager;
     private OperatorDaoImpl operatorDao;

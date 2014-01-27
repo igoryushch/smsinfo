@@ -51,7 +51,46 @@ public class SmsServiceUnitTestSupport {
     }
 
     public static String getInternalTestRequestForUtils(){
-        return getXmlAsString( "SMSInfoServiceImpl\\src\\test\\resources\\sendRequest.xml" ).trim();
+        
+        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<Structure>" +
+                "<Value name=\"operation\">" +
+                "<Type>String</Type>" +
+                "<Data>sendMessages</Data>" +
+                "</Value>" +
+                "<Array name=\"messageArray\">" +
+                "<Structure>" +
+                "<Value name=\"id\">" +
+                "<Type>String</Type>" +
+                "<Data>11111111111</Data>" +
+                "</Value>" +
+                "<Value name=\"phone\">" +
+                "<Type>String</Type>" +
+                "<Data>0661234567</Data>" +
+                "</Value>" +
+                "<Value name=\"text\">" +
+                "<Type>String</Type>" +
+                "<Data>FooBar</Data>" +
+                "</Value>" +
+                "</Structure>" +
+                "<Structure>" +
+                "<Value name=\"id\">" +
+                "<Type>String</Type>" +
+                "<Data>121222222222</Data>" +
+                "</Value>" +
+                "<Value name=\"phone\">" +
+                "<Type>String</Type>" +
+                "<Data>0671234567</Data>" +
+                "</Value>" +
+                "<Value name=\"text\">" +
+                "<Type>String</Type>" +
+                "<Data>BarFoo</Data>" +
+                "</Value>" +
+                "</Structure>" +
+                "</Array>" +
+                "</Structure>";
+        
+        return str;
     }
 
     public static String buildAcceptedResponseTest(){
@@ -83,7 +122,7 @@ public class SmsServiceUnitTestSupport {
             Scanner scanner = new Scanner( new FileInputStream(new File(filePath)) );
             StringBuilder sb = new StringBuilder(  );
             while( scanner.hasNext() ){
-                sb.append( scanner.nextLine().replaceAll( "\n", "" ).replaceAll( "\r", "" ).replaceAll( "\t", "" ) );
+                sb.append( scanner.nextLine().replaceAll( "", "" ).replaceAll( "\r", "" ).replaceAll( "", "" ) );
             }
             return sb.toString();
 
