@@ -11,6 +11,8 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Mockito.spy;
+
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
  * http://novaposhta.ua/
@@ -26,10 +28,30 @@ import java.util.Map;
 public class LifeSendingStrategyUnitTest {
 
     private LifeSmsSendingStrategy smsSendingStrategy;
+    private OperatorRestClient operatorRestClient;
 
     @BeforeMethod
     public void setUp() {
-        smsSendingStrategy = new LifeSmsSendingStrategy();
+        smsSendingStrategy = spy( new LifeSmsSendingStrategy() );
+        smsSendingStrategy.setOperatorHost( "testHost" );
+        smsSendingStrategy.setOperatorAuthHost( "testAuthHost" );
+        smsSendingStrategy.setOperatorLogin( "testLogin" );
+        smsSendingStrategy.setOperatorPassword( "testPassword" );
+
+        this.operatorRestClient = new OperatorRestClientStub();
+        smsSendingStrategy.setOperatorRestClient( operatorRestClient );
+    }
+
+    @Test
+    public void testSend(){
+
+        List<SmsRequest> actualList = smsSendingStrategy.send( SmsServiceUnitTestSupport.getTestRequestList() );
+        Assert.assertTrue( actualList.size() == 5 );
+        for( SmsRequest smsRequest : actualList ){
+            Assert.assertNotNull( smsRequest.getOperatorMessageId(), "Operator message id was null" );
+            Assert.assertEquals( smsRequest.getStatus(), "Posted" );
+            Assert.assertEquals( smsRequest.getOperatorStatus(), "Accepted" );
+        }
     }
 
     @Test

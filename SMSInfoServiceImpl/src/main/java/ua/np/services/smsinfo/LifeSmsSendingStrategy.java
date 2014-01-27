@@ -53,6 +53,7 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
             if( "Accepted".equals( entry.getValue() )){
                 request.setStatus( "Posted" );
             }
+            i++;
         }
         return smsRequestList;
     }
@@ -111,5 +112,25 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
 
     private String generateUniqueKey(){
         return String.valueOf( (int) (Math.random()*Integer.MAX_VALUE) );
+    }
+
+    public void setOperatorHost( String operatorHost ) {
+        this.operatorHost = operatorHost;
+    }
+
+    public void setOperatorAuthHost( String operatorAuthHost ) {
+        this.operatorAuthHost = operatorAuthHost;
+    }
+
+    public void setOperatorLogin( String operatorLogin ) {
+        this.operatorLogin = operatorLogin;
+    }
+
+    public void setOperatorPassword( String operatorPassword ) {
+        this.operatorPassword = operatorPassword;
+    }
+
+    public void setOperatorRestClient( OperatorRestClient operatorRestClient ) {
+        this.operatorRestClient = operatorRestClient;
     }
 }

@@ -2,6 +2,7 @@ package ua.np.services.smsinfo;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +19,13 @@ import java.util.List;
 @XmlRootElement(name = "report",namespace="http://goldetele.com/cpa")
 public class KyivstarAcceptanceResponse {
 
-    @XmlElement(name = "status")
-    private List<KyivstarAcceptanceStatus> statuses;
+    @XmlElement
+    private List<KyivstarAcceptanceStatus> status;
 
-    public List<KyivstarAcceptanceStatus> getStatuses() {
-        return statuses;
+    public List<KyivstarAcceptanceStatus> getStatus() {
+        if( status == null ){
+            status = new ArrayList<KyivstarAcceptanceStatus>();
+        }
+        return status;
     }
 }

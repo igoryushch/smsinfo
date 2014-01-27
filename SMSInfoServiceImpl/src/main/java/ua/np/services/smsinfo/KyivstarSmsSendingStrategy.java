@@ -40,14 +40,14 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         // unmarshall response
         KyivstarAcceptanceResponse resultResponse = parseResponse(responseInputStream);
         // update operator message id & statuses
-        List<KyivstarAcceptanceStatus> statusList = resultResponse.getStatuses();
+        List<KyivstarAcceptanceStatus> statusList = resultResponse.getStatus();
         for (KyivstarAcceptanceStatus acceptanceStatus : statusList){
             for(SmsRequest smsRequest : smsRequestList){
                 if( smsRequest.getId() == Long.valueOf( acceptanceStatus.getClid() ) ){
 //                    smsRequest.setOperator(  );
                     smsRequest.setOperatorMessageId( acceptanceStatus.getMid() );
-                    smsRequest.setOperatorStatus( acceptanceStatus.getStatus() );
-                    if( "Accepted".equals(acceptanceStatus.getStatus() )){
+                    smsRequest.setOperatorStatus( acceptanceStatus.getValue() );
+                    if( "Accepted".equals(acceptanceStatus.getValue() )){
                         smsRequest.setStatus( "Posted" );
                     }
                 }
@@ -74,7 +74,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         return null;
     }
 
-    public String buildXmlRequest(List<SmsRequest> smsRequestList){
+    private String buildXmlRequest(List<SmsRequest> smsRequestList){
 
         StringBuilder sb = new StringBuilder(  );
 
@@ -82,7 +82,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         sb.append( "<root xmlns=\"http://goldentele.com/cpa\">" );
         sb.append( "<login>" + operatorLogin + "</login><paswd>" + operatorPassword + "</paswd>" );
         sb.append( "<service>bulk-request</service>" );
-        sb.append( "<expiry>22.01.2014 12:00:00</expiry>" );
+//        sb.append( "<expiry>22.01.2014 12:00:00</expiry>" );
         sb.append( "<tid>1</tid>" );
         sb.append( "<messages>" );
 
@@ -94,5 +94,21 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         sb.append( "</messages></root>" );
 
         return sb.toString();
+    }
+
+    public void setOperatorHost( String operatorHost ) {
+        this.operatorHost = operatorHost;
+    }
+
+    public void setOperatorLogin( String operatorLogin ) {
+        this.operatorLogin = operatorLogin;
+    }
+
+    public void setOperatorPassword( String operatorPassword ) {
+        this.operatorPassword = operatorPassword;
+    }
+
+    public void setOperatorRestClient( OperatorRestClient operatorRestClient ) {
+        this.operatorRestClient = operatorRestClient;
     }
 }

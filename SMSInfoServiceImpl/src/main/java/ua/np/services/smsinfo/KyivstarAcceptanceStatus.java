@@ -1,7 +1,6 @@
 package ua.np.services.smsinfo;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlValue;
+import javax.xml.bind.annotation.*;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -14,14 +13,19 @@ import javax.xml.bind.annotation.XmlValue;
  * Date: 21.01.14
  */
 
-@XmlRootElement(name = "status" )
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "statusType", namespace = "http://goldetele.com/cpa", propOrder = {
+        "value"
+})
 public class KyivstarAcceptanceStatus {
 
+    @XmlAttribute
     private String mid;
+    @XmlAttribute
     private String clid;
 
     @XmlValue
-    private String status;
+    private String value;
 
     public String getMid() {
         return mid;
@@ -39,11 +43,11 @@ public class KyivstarAcceptanceStatus {
         this.clid = clid;
     }
 
-    public String getStatus() {
-        return status;
+    public String getValue() {
+        return value;
     }
 
-    public void setStatus( String status ) {
-        this.status = status;
+    public void setValue( String value ) {
+        this.value = value;
     }
 }

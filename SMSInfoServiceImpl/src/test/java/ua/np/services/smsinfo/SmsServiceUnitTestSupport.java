@@ -29,6 +29,16 @@ public class SmsServiceUnitTestSupport {
         return result;
     }
 
+    public static List<SmsRequest> getTestRequestListWithIds(){
+        List<SmsRequest> result = getTestRequestList();
+        Long i = 1L;
+        for( SmsRequest smsRequest : result ){
+            smsRequest.setId( i );
+            i++;
+        }
+        return result;
+    }
+
     public static Operator newOperator( String name ){
         Set<String> codes = new HashSet<String>(  );
         codes.add( "066" );
