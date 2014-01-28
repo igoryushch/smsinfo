@@ -14,4 +14,5 @@ package ua.np.services.smsinfo;
 public interface OperatorDao {
     public Operator getOperatorByPhoneCode(String phoneCode);
     public Operator getDefaultOperator();
+    public Operator getOperatorByName(String name);
 }

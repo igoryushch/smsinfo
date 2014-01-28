@@ -1,6 +1,7 @@
 package ua.np.services.smsinfo;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -18,6 +19,7 @@ import java.util.Set;
 @NamedQueries(
         {
                 @NamedQuery(name = "findByPhoneCode", query = "SELECT op FROM Operator op WHERE op.phoneCodes = :code"),
+                @NamedQuery(name = "findByName", query = "SELECT op FROM Operator op WHERE op.name = :name"),
         })
 public class Operator {
 
@@ -39,6 +41,11 @@ public class Operator {
     public Operator( String name, Set<String> phoneCodes ) {
         this.name = name;
         this.phoneCodes = phoneCodes;
+    }
+
+    public Operator( String name ) {
+        this.name = name;
+        this.phoneCodes = new HashSet<>(  );
     }
 
     public Long getId() {

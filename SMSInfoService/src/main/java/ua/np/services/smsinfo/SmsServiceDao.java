@@ -21,6 +21,8 @@ public interface SmsServiceDao {
 
     public List<SmsRequest> getRequestsForSystem(String systemName);
 
-    public void updateStatuses(Map<String,String> statusMapByOperatorId);
+    public void updateOperatorStatuses(Map<String,String> statusMap, Operator operator);
+
+    public void updateInternalStatuses(List<SmsRequest> requestList);
 
 }

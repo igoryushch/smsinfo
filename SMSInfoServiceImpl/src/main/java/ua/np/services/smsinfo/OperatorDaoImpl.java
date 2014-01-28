@@ -38,4 +38,11 @@ public class OperatorDaoImpl implements OperatorDao {
         return resultList.get( 0 );
     }
 
+    @Override
+    public Operator getOperatorByName( String name ) {
+        List<Operator> resultList = entityManager.createNamedQuery( "findByName",Operator.class ).setParameter( "name", name ).getResultList();
+        if( resultList.isEmpty() ) return null;
+        return resultList.get( 0 );
+    }
+
 }

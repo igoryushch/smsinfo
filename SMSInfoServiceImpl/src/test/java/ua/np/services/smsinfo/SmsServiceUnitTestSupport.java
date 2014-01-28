@@ -19,6 +19,12 @@ import java.util.*;
 
 public class SmsServiceUnitTestSupport {
 
+    public static SmsRequest getTestRequest(){
+        return new SmsRequest( "0001","Awis","0671234567","FooBar",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life:)" ),"321321312","");
+    }
+
     public static List<SmsRequest> getTestRequestList(){
         List<SmsRequest> result = new ArrayList<SmsRequest>(  );
         for( int i = 1; i < 6;i++ ){

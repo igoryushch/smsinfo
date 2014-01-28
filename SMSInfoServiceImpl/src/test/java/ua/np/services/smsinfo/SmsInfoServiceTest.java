@@ -69,14 +69,11 @@ public class SmsInfoServiceTest {
 
         // verifications
         verify( mockSmsServiceDao, times( 1 ) ).getRequestsForSystem( "Awis" );
+    }
 
-        // assertions
-        Assert.assertNotNull(response, "call of getDeliveryStatusData returned null");
-        Assert.assertTrue( response.contains( "<?xml version=\"1.0\" encoding=\"utf-8\"?><Array><Structure>" ) );
-        for( SmsRequest request : requestList ){
-            Assert.assertTrue( response.contains( "<Row><Value name=\"IdInternal\"><Type>String</Type>" ));
-            Assert.assertTrue( response.contains( "<Value name=\"CurrentStatus\"><Type>String</Type><Data>" + request.getIncomingId() + "</Data></Value></Row>" ) );
-        }
+    @Test
+    public void testUpdateStatuses(){
+        Assert.fail( "Not implemented yet!" );
     }
 
 }

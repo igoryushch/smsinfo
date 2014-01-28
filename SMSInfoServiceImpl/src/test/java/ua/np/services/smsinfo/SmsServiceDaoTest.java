@@ -10,7 +10,6 @@ import javax.persistence.TypedQuery;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -73,21 +72,42 @@ public class SmsServiceDaoTest {
     }
 
     @Test
-    public void testUpdateStatuses(){
+    public void testUpdateOperatorStatuses(){
         // mocks & inits
         Query mockQuery = mock(Query.class);
-        String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId IN :idList";
+        String queryString = "UPDATE SmsRequest sr SET sr.operatorStatus = :newStatus WHERE sr.operatorMessageId = :operatorMid AND sr.operator = :operator";
+
+        Operator operator = getTestOperator();
 
         // expectations
-        when(mockEntityManager.createQuery(queryString)).thenReturn(mockQuery);
-
+        when(mockEntityManager.createQuery( queryString )).thenReturn(mockQuery);
+        when( mockQuery.setParameter( "newStatus", "Sended" )).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "newStatus", "Error")).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "operatorMid", "01233267461")).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "operatorMid", "01233213321")).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "operator", operator)).thenReturn( mockQuery );
+        when( mockQuery.executeUpdate() ).thenReturn( 1 );
         // logic
-        smsServiceDao.updateStatuses( getTestStatusMap() );
+        smsServiceDao.updateOperatorStatuses( getTestStatusMap(), operator );
 
+        int mapSize = getTestStatusMap().size(); 
         // verifications
-        verify(mockEntityManager, times(1)).createQuery(queryString);
-        verify(mockQuery, times(1)).executeUpdate();
-        verifyNoMoreInteractions(mockEntityManager, mockQuery);
+        verify(mockEntityManager, times(mapSize)).createQuery( queryString );
+        verify(mockQuery, times(mapSize)).executeUpdate();
+    }
+
+    @Test
+    public void testUpdateInternalStatuses(){
+        SmsRequest testRequest = SmsServiceUnitTestSupport.getTestRequest();
+        List<SmsRequest> requestList = new ArrayList<>( 1 );
+        requestList.add( testRequest );
+        when( mockEntityManager.merge( testRequest ) ).thenReturn( testRequest );
+        // logic
+        smsServiceDao.updateInternalStatuses( requestList );
+        // verifications
+        verify( mockEntityManager, times( requestList.size() ) ).merge( testRequest );
+        verifyNoMoreInteractions( mockEntityManager );
+
     }
 
     private Map<String, String> getTestStatusMap() {
@@ -97,6 +117,10 @@ public class SmsServiceDaoTest {
         result.put( "01233267461", "Error" );
 
         return result;
+    }
+
+    private Operator getTestOperator(){
+        return new Operator( "Life" );
     }
 
 

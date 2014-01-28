@@ -30,7 +30,7 @@ import java.io.UnsupportedEncodingException;
  */
 
 
-public class OperatorRestClientImpl {
+public class OperatorRestClientImpl implements OperatorRestClient {
 
     @Value("${host}")
     private String proxyHost;
