@@ -28,16 +28,16 @@ public class KyivstarSmsStatusReceiverImpl implements SmsStatusReceiver {
     public String updateStatuses( String xml ) {
 
         KyivstarAcceptanceResponse acceptanceResponse = parseResponse( xml );
-        List<KyivstarAcceptanceStatus> statusList = acceptanceResponse.getStatus();
+        if( acceptanceResponse != null ) {
+            List<KyivstarAcceptanceStatus> statusList = acceptanceResponse.getStatus();
 
-        Map<String, String> idList = new HashMap<>(  );
-        for (KyivstarAcceptanceStatus acceptanceStatus : statusList){
-            idList.put( acceptanceStatus.getClid() , acceptanceStatus.getValue());
+            Map<String, String> idList = new HashMap<>();
+            for( KyivstarAcceptanceStatus acceptanceStatus : statusList ) {
+                idList.put( acceptanceStatus.getClid(), acceptanceStatus.getValue() );
+            }
+            smsServiceDao.updateOperatorStatuses( idList, operatorDao.getOperatorByName( "Kyivstar" ) );
         }
-
-        smsServiceDao.updateOperatorStatuses( idList, operatorDao.getOperatorByName( "Kyivstar" ) );
-
-        return null;
+        return "";
     }
 
     private KyivstarAcceptanceResponse parseResponse( String statusString ) {

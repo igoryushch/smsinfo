@@ -45,4 +45,9 @@ public class OperatorDaoImpl implements OperatorDao {
         return resultList.get( 0 );
     }
 
+    @Override
+    public List<Operator> findAll() {
+        return entityManager.createQuery("from " + Operator.class.getName()).getResultList();
+    }
+
 }

@@ -46,8 +46,7 @@ public class KyivstarSendingStrategyUnitTest {
         Assert.assertTrue( actualList.size() == 5 );
         for( SmsRequest smsRequest : actualList ){
             Assert.assertNotNull( smsRequest.getOperatorMessageId(), "Operator message id was null" );
-            Assert.assertEquals( smsRequest.getStatus(), "Posted" );
-            Assert.assertEquals( smsRequest.getOperatorStatus(), "Accepted" );
+            Assert.assertEquals( smsRequest.getStatus(), "Accepted" );
         }
     }
 

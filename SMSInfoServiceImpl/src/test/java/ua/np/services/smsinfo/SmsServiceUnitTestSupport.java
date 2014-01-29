@@ -22,7 +22,7 @@ public class SmsServiceUnitTestSupport {
     public static SmsRequest getTestRequest(){
         return new SmsRequest( "0001","Awis","0671234567","FooBar",
                 new GregorianCalendar(  ),new GregorianCalendar(  ),
-                "Pending",newOperator( "Life:)" ),"321321312","");
+                "Pending",newOperator( "Life:)" ),"321321312");
     }
 
     public static List<SmsRequest> getTestRequestList(){
@@ -30,7 +30,7 @@ public class SmsServiceUnitTestSupport {
         for( int i = 1; i < 6;i++ ){
             result.add( new SmsRequest( "000"+i,"Awis","0671234567","FooBar",
                     new GregorianCalendar(  ),new GregorianCalendar(  ),
-                    "Pending",newOperator( "Life:)" ),"321321312","") );
+                    "Pending",newOperator( "Life:)" ),"321321312") );
         }
         return result;
     }
@@ -116,10 +116,10 @@ public class SmsServiceUnitTestSupport {
         return Arrays.asList(
                 new SmsRequest( "11111111111", "1C", "0661234567", "FooBar",
                                 new GregorianCalendar(), new GregorianCalendar(),
-                                "Pending", newOperator( "Life:)" ), "321321312","" ),
+                                "Pending", newOperator( "Life:)" ), "321321312" ),
                 new SmsRequest( "121222222222", "1C", "0671234567", "BarFoo",
                                 new GregorianCalendar(), new GregorianCalendar(),
-                                "Pending", newOperator( "Life:)" ), "321321313","" ) );
+                                "Pending", newOperator( "Life:)" ), "321321313" ) );
     }
 
     private static String getXmlAsString(String filePath){
@@ -141,7 +141,7 @@ public class SmsServiceUnitTestSupport {
     public static List<SmsRequest> getTestSmsRequestList(){
         return Arrays.asList(
                 new SmsRequest( "1010101", "1C", "0991112233", "FooBar",
-                        new GregorianCalendar(  ), new GregorianCalendar(  ), "Pending",newOperator( "Life:)" ),"","Delivered")
+                        new GregorianCalendar(  ), new GregorianCalendar(  ), "Delivered",newOperator( "Life:)" ),"")
         );
     }
 

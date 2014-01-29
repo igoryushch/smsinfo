@@ -42,7 +42,7 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
 
     @Override
     public void updateOperatorStatuses( Map<String, String> statusMap, Operator operator ) {
-        String queryString = "UPDATE SmsRequest sr SET sr.operatorStatus = :newStatus WHERE sr.operatorMessageId = :operatorMid AND sr.operator = :operator";
+        String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid AND sr.operator = :operator";
         for( Map.Entry<String, String> entry : statusMap.entrySet() ){
             entityManager.createQuery( queryString )
                     .setParameter( "newStatus", entry.getValue() )

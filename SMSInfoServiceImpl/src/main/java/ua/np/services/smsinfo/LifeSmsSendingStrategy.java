@@ -49,10 +49,7 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
         for( Map.Entry<String, String> entry : statusMap.entrySet() ){
             SmsRequest request = smsRequestList.get( i );
             request.setOperatorMessageId( entry.getKey() );
-            request.setOperatorStatus( entry.getValue() );
-            if( "Accepted".equals( entry.getValue() )){
-                request.setStatus( "Posted" );
-            }
+            request.setStatus( entry.getValue() );
             i++;
         }
         return smsRequestList;

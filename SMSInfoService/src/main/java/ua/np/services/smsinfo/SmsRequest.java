@@ -50,12 +50,11 @@ public class SmsRequest {
     @JoinColumn(name="operatorId")
     private Operator operator;
     private String operatorMessageId;
-    private String operatorStatus;
 
     public SmsRequest() {
     }
 
-    public SmsRequest( String incomingId, String sytemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId, String operatorStatus ) {
+    public SmsRequest( String incomingId, String sytemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId ) {
         this.incomingId = incomingId;
         this.sytemName = sytemName;
         this.phoneNumber = phoneNumber;
@@ -65,7 +64,6 @@ public class SmsRequest {
         this.status = status;
         this.operator = operator;
         this.operatorMessageId = operatorMessageId;
-        this.operatorStatus = operatorStatus;
     }
 
     public Long getId() {
@@ -146,13 +144,5 @@ public class SmsRequest {
 
     public void setOperatorMessageId( String operatorMessageId ) {
         this.operatorMessageId = operatorMessageId;
-    }
-
-    public String getOperatorStatus() {
-        return operatorStatus;
-    }
-
-    public void setOperatorStatus( String operatorStatus ) {
-        this.operatorStatus = operatorStatus;
     }
 }

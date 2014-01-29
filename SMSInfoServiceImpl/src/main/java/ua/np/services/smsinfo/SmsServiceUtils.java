@@ -88,7 +88,7 @@ public class SmsServiceUtils {
         String template = "<Row><Value name=\"IdInternal\"><Type>String</Type><Data>{0}</Data></Value><Value name=\"CurrentStatus\"><Type>String</Type><Data>{1}</Data></Value></Row>";
 
         for (SmsRequest request : smsRequests){
-            sb.append( template.replace( "{0}",request.getIncomingId()).replace( "{1}",request.getOperatorStatus() ) );
+            sb.append( template.replace( "{0}",request.getIncomingId()).replace( "{1}",request.getStatus()) );
         }
 
         sb.append( "</Rows></ValueTable></Structure>" );

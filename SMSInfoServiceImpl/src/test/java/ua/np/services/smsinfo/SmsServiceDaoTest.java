@@ -81,7 +81,7 @@ public class SmsServiceDaoTest {
 
         // expectations
         when(mockEntityManager.createQuery( queryString )).thenReturn(mockQuery);
-        when( mockQuery.setParameter( "newStatus", "Sended" )).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "newStatus", "Delivered" )).thenReturn( mockQuery );
         when( mockQuery.setParameter( "newStatus", "Error")).thenReturn( mockQuery );
         when( mockQuery.setParameter( "operatorMid", "01233267461")).thenReturn( mockQuery );
         when( mockQuery.setParameter( "operatorMid", "01233213321")).thenReturn( mockQuery );
@@ -113,7 +113,7 @@ public class SmsServiceDaoTest {
     private Map<String, String> getTestStatusMap() {
 
         Map<String, String> result = new HashMap<>(  );
-        result.put( "01233213321", "Sended" );
+        result.put( "01233213321", "Delivered" );
         result.put( "01233267461", "Error" );
 
         return result;

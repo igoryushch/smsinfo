@@ -46,10 +46,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
                 if( smsRequest.getId() == Long.valueOf( acceptanceStatus.getClid() ) ){
 //                    smsRequest.setOperator(  );
                     smsRequest.setOperatorMessageId( acceptanceStatus.getMid() );
-                    smsRequest.setOperatorStatus( acceptanceStatus.getValue() );
-                    if( "Accepted".equals(acceptanceStatus.getValue() )){
-                        smsRequest.setStatus( "Posted" );
-                    }
+                    smsRequest.setStatus( acceptanceStatus.getValue() );
                 }
             }
         }
