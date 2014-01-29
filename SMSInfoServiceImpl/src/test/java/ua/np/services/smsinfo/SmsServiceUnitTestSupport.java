@@ -170,6 +170,19 @@ public class SmsServiceUnitTestSupport {
         return sb.toString();
     }
 
+    public static Map<String, String> getTestStatusMap() {
+
+        Map<String, String> result = new HashMap<>(  );
+        result.put( "01233213321", "Delivered" );
+        result.put( "01233267461", "Error" );
+
+        return result;
+    }
+
+    public static Operator getTestOperator(){
+        return new Operator( "Life" );
+    }
+
     public static void checkAssertions(Map<String, String> param, String expectedId, String expectedText, String expectedPhone){
         Assert.assertTrue( param.containsKey( "id" ) );
         Assert.assertTrue( param.containsKey( "text" ) );

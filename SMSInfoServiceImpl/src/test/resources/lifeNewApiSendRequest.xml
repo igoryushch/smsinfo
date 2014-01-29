@@ -1,0 +1,7 @@
+<message>
+    <service id="individual" validity="+5 hour" source="NovaPoshta" uniq_key="1404141722"/>
+    <to>380962276147</to>
+    <body content-type="text/plain">First Test Message</body>
+    <to>380962276147</to>
+    <body content-type="text/plain">Second Test Message</body>
+</message>

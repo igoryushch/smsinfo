@@ -35,7 +35,7 @@ public class KyivstarSmsStatusReceiverImpl implements SmsStatusReceiver {
             for( KyivstarAcceptanceStatus acceptanceStatus : statusList ) {
                 idList.put( acceptanceStatus.getClid(), acceptanceStatus.getValue() );
             }
-            smsServiceDao.updateOperatorStatuses( idList, operatorDao.getOperatorByName( "Kyivstar" ) );
+            smsServiceDao.updateStatuses( idList, operatorDao.getOperatorByName( "Kyivstar" ) );
         }
         return "";
     }

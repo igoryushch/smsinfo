@@ -5,6 +5,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -73,7 +74,13 @@ public class SmsInfoServiceTest {
 
     @Test
     public void testUpdateStatuses(){
-        Assert.fail( "Not implemented yet!" );
+        Map<String, String> testData = SmsServiceUnitTestSupport.getTestStatusMap();
+        smsInfoService.updateStatuses( testData, null );
+        verify( mockSmsServiceDao, times( 1 ) ).updateStatuses( testData );
+
+        Operator testOperator = SmsServiceUnitTestSupport.getTestOperator();
+        smsInfoService.updateStatuses( testData,testOperator  );
+        verify( mockSmsServiceDao, times( 1 ) ).updateStatuses( testData, testOperator );
     }
 
 }

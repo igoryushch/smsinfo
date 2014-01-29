@@ -1,6 +1,7 @@
 package ua.np.services.smsinfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -40,7 +41,8 @@ public class SmsInfoServiceImpl implements SmsInfoService{
     }
 
     @Override
-    public String updateStatuses( String operatorName, String statusData ) {
-        return null;
+    public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator ) {
+        if( operator == null ) smsServiceDao.updateStatuses( newMessageStatuses );
+        else smsServiceDao.updateStatuses( newMessageStatuses, operator );
     }
 }

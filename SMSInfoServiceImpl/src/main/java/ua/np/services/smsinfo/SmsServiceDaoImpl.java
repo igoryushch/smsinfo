@@ -21,10 +21,15 @@ import java.util.Map;
 public class SmsServiceDaoImpl implements SmsServiceDao {
 
     private EntityManager entityManager;
+    private int maxSendCount;
 
     @PersistenceContext
     public void setEntityManager(EntityManager entityManager) {
         this.entityManager = entityManager;
+    }
+
+    public void setMaxSendCount( int maxSendCount ) {
+        this.maxSendCount = maxSendCount;
     }
 
     @Override
@@ -41,8 +46,28 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     }
 
     @Override
-    public void updateOperatorStatuses( Map<String, String> statusMap, Operator operator ) {
-        String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid AND sr.operator = :operator";
+    public List<SmsRequest> getMessagesToSend() {
+        return entityManager.createNamedQuery( "findPendingRequests", SmsRequest.class )
+                .setParameter( "statusPending", "Pending" )
+                .setMaxResults( maxSendCount )
+                .getResultList();
+    }
+
+    @Override
+    public void updateStatuses( Map<String, String> statusMap ) {
+        String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid";
+        for( Map.Entry<String, String> entry : statusMap.entrySet() ){
+            entityManager.createQuery( queryString )
+                    .setParameter( "newStatus", entry.getValue() )
+                    .setParameter( "operatorMid", entry.getKey() )
+                    .executeUpdate();
+        }
+    }
+
+    @Override
+    public void updateStatuses( Map<String, String> statusMap, Operator operator ) {
+        String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid";
+        if( operator != null ) queryString = queryString + " AND sr.operator = :operator";
         for( Map.Entry<String, String> entry : statusMap.entrySet() ){
             entityManager.createQuery( queryString )
                     .setParameter( "newStatus", entry.getValue() )
@@ -51,13 +76,4 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
                     .executeUpdate();
         }
     }
-
-    @Override
-    public void updateInternalStatuses( List<SmsRequest> requestList ) {
-        for( SmsRequest smsRequest : requestList ){
-            entityManager.merge( smsRequest );
-        }
-    }
-
-
 }

@@ -35,15 +35,15 @@ import java.io.UnsupportedEncodingException;
  */
 
 @ContextConfiguration(locations = "classpath*:ua/np/services/smsinfo/OperatorInteractionTest-context.xml")
-public class LifeIntegrationTest extends AbstractTestNGSpringContextTests {
+public class LifeNewApiIntegrationTest extends AbstractTestNGSpringContextTests {
 
-    @Value( "${lifeHost}" )
+    @Value( "${lifeNewHost}" )
     private String operatorHost;
-    @Value( "${lifeAuthHost}" )
+    @Value( "${lifeNewAuthHost}" )
     private String operatorAuthHost;
-    @Value( "${lifeHostUser}" )
+    @Value( "${lifeNewHostUser}" )
     private String operatorLogin;
-    @Value( "${lifeHostPassword}" )
+    @Value( "${lifeNewHostPassword}" )
     private String operatorPassword;
     @Autowired
     private ProxySettingsHolder proxySettingsHolder;

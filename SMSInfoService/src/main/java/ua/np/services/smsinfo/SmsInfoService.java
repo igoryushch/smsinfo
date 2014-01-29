@@ -3,6 +3,7 @@ package ua.np.services.smsinfo;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.util.Map;
 
 /**
  * Copyright 2013 Nova Poshta property
@@ -24,7 +25,7 @@ public interface SmsInfoService {
     @WebMethod
     public String getDeliveryStatusData ( @WebParam(name = "systemName") String systemName );
 
-    @WebMethod
-    public String updateStatuses ( @WebParam(name = "operatorName") String operatorName, @WebParam(name = "statusData") String statusData );
+//    @WebMethod
+    public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator );
 
 }

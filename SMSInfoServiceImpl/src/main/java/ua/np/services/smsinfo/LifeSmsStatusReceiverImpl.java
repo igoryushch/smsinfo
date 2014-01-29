@@ -35,7 +35,7 @@ public class LifeSmsStatusReceiverImpl implements SmsStatusReceiver {
             for( DetailType detailType : detailTypeList ){
                  idList.put( detailType.getId(), detailType.getState() );
             }
-            smsServiceDao.updateOperatorStatuses( idList, operatorDao.getOperatorByName( "Life" ) );
+            smsServiceDao.updateStatuses( idList, operatorDao.getOperatorByName( "Life" ) );
         }
         return "";
     }

@@ -3,9 +3,10 @@ package ua.np.services.smsinfo;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import org.springframework.oxm.Unmarshaller;
+
+import javax.xml.transform.stream.StreamSource;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
     private String operatorLogin;
     @Value( "${kyivstarHostPassword}" )
     private String operatorPassword;
+
+    private Unmarshaller jaxbUnmarshaller;
 
     private OperatorRestClient operatorRestClient;
 
@@ -55,19 +58,13 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
     }
 
     private KyivstarAcceptanceResponse parseResponse( InputStream responseInputStream ) {
-
+        KyivstarAcceptanceResponse resultResponse = null;
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance( KyivstarAcceptanceResponse.class );
-
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            KyivstarAcceptanceResponse resultResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal(responseInputStream);
-
+            resultResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal(new StreamSource(responseInputStream));
             return resultResponse;
-
-        } catch( JAXBException e ) {
+        } catch( IOException e ) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -107,5 +104,9 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
 
     public void setOperatorRestClient( OperatorRestClient operatorRestClient ) {
         this.operatorRestClient = operatorRestClient;
+    }
+
+    public void setJaxbUnmarshaller( Unmarshaller jaxbUnmarshaller ) {
+        this.jaxbUnmarshaller = jaxbUnmarshaller;
     }
 }
