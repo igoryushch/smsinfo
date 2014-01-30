@@ -1,6 +1,5 @@
 package ua.np.services.smsinfo;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
@@ -23,6 +22,7 @@ public class LifeSmsStatusReceiverImpl implements SmsStatusReceiver {
     private SmsServiceDao smsServiceDao;
     private SmsServiceUtils smsServiceUtils;
     private OperatorDao operatorDao;
+    private Unmarshaller jaxbUnmarshaller;
 
     @Override
     public String updateStatuses( String xml ) {
@@ -41,19 +41,28 @@ public class LifeSmsStatusReceiverImpl implements SmsStatusReceiver {
     }
 
     private LifeMessageStatus parseResponse( String statusString ) {
-
+        LifeMessageStatus resultResponse = null;
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance( LifeMessageStatus.class );
-
-            Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            LifeMessageStatus resultResponse = (LifeMessageStatus) jaxbUnmarshaller.unmarshal(new StringReader( statusString ));
-
-            return resultResponse;
-
+            resultResponse = (LifeMessageStatus) jaxbUnmarshaller.unmarshal(new StringReader( statusString ));
         } catch( JAXBException e ) {
             e.printStackTrace();
         }
-
         return null;
+    }
+
+    public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
+        this.smsServiceDao = smsServiceDao;
+    }
+
+    public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
+        this.smsServiceUtils = smsServiceUtils;
+    }
+
+    public void setOperatorDao( OperatorDao operatorDao ) {
+        this.operatorDao = operatorDao;
+    }
+
+    public void setJaxbUnmarshaller( Unmarshaller jaxbUnmarshaller ) {
+        this.jaxbUnmarshaller = jaxbUnmarshaller;
     }
 }

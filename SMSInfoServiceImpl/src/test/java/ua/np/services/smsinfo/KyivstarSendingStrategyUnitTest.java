@@ -1,5 +1,6 @@
 package ua.np.services.smsinfo;
 
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -37,6 +38,11 @@ public class KyivstarSendingStrategyUnitTest {
 
         this.operatorRestClient = new OperatorRestClientStub();
         smsSendingStrategy.setOperatorRestClient( operatorRestClient );
+
+        Jaxb2Marshaller jaxbUnmarshaller = new Jaxb2Marshaller();
+        jaxbUnmarshaller.setClassesToBeBound(new Class<?>[] { KyivstarAcceptanceResponse.class,KyivstarAcceptanceStatus.class });
+
+        smsSendingStrategy.setJaxbUnmarshaller( jaxbUnmarshaller );
     }
 
     @Test
@@ -106,5 +112,4 @@ public class KyivstarSendingStrategyUnitTest {
                 "</report>";
         return new ByteArrayInputStream(str.getBytes());
     }
-
 }

@@ -2,7 +2,6 @@ package ua.np.services.smsinfo;
 
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Value;
-
 import org.springframework.oxm.Unmarshaller;
 
 import javax.xml.transform.stream.StreamSource;

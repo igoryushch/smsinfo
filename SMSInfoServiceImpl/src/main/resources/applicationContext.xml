@@ -27,13 +27,11 @@
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
     </bean>
 
-
-    <bean id="jaxb2Marshaller"
-          class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+    <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
         <property name="classesToBeBound">
             <list>
-                <value>ua.np.services.smsinfo.KyivstarSmsSendingStrategy</value>
-                <value>ua.np.services.smsinfo.LifeSmsSendingStrategy</value>
+                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+                <value>ua.np.services.smsinfo.KyivstarAcceptanceStatus</value>
             </list>
         </property>
     </bean>
