@@ -17,7 +17,7 @@ import java.util.Map;
 
 public interface SmsServiceDao {
 
-    public void addRequests(List <SmsRequest> requests);
+    public List <SmsRequest> addRequests(List <SmsRequest> requests);
 
     public List<SmsRequest> getRequestsForSystem(String systemName);
 

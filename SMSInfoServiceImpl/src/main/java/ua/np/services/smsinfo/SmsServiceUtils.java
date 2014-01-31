@@ -43,12 +43,11 @@ public class SmsServiceUtils {
 
         SmsRequest request = new SmsRequest(  );
         request.setIncomingId( messageRequest.get( "id" ) );
-        request.setSytemName( systemName );
+        request.setSystemName( systemName );
         request.setPhoneNumber( messageRequest.get( "phone" ) );
         request.setMessageText( messageRequest.get( "text" ) );
         request.setCreationDate( new GregorianCalendar(  ) );
         request.setUpdateDate( new GregorianCalendar() );
-        request.setOperator( resolveOperator( messageRequest.get( "phone" ) ) );
         request.setStatus( getInitialStatus() );
 
         return request;

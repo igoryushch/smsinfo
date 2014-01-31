@@ -12,7 +12,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClients;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,13 +31,9 @@ import java.io.UnsupportedEncodingException;
 
 public class OperatorRestClientImpl implements OperatorRestClient {
 
-    @Value("${host}")
     private String proxyHost;
-    @Value("${port}")
     private String proxyPort;
-    @Value("${username}")
     private String proxyUsername;
-    @Value("${password}")
     private String proxyPassword;
 
     public InputStream sendRequest(HttpPost postRequest, String xmlRequest){
@@ -121,4 +116,19 @@ public class OperatorRestClientImpl implements OperatorRestClient {
         return httpClient;
     }
 
+    public void setProxyHost( String proxyHost ) {
+        this.proxyHost = proxyHost;
+    }
+
+    public void setProxyPort( String proxyPort ) {
+        this.proxyPort = proxyPort;
+    }
+
+    public void setProxyUsername( String proxyUsername ) {
+        this.proxyUsername = proxyUsername;
+    }
+
+    public void setProxyPassword( String proxyPassword ) {
+        this.proxyPassword = proxyPassword;
+    }
 }

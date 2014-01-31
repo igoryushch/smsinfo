@@ -1,7 +1,6 @@
 package ua.np.services.smsinfo;
 
 import org.apache.http.client.methods.HttpPost;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -25,15 +24,10 @@ import java.util.Map;
 
 public class LifeSmsSendingStrategy implements SmsSendingStrategy {
 
-    @Value( "${lifeHost}" )
     private String operatorHost;
-    @Value( "${lifeAuthHost}" )
     private String operatorAuthHost;
-    @Value( "${lifeHostUser}" )
     private String operatorLogin;
-    @Value( "${lifeHostPassword}" )
     private String operatorPassword;
-
     private OperatorRestClient operatorRestClient;
 
     @Override

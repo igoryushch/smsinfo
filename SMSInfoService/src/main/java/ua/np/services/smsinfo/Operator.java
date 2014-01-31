@@ -19,7 +19,7 @@ import java.util.Set;
 @NamedQueries(
         {
                 @NamedQuery(name = "findByPhoneCode", query = "SELECT op FROM Operator op WHERE op.phoneCodes = :code"),
-                @NamedQuery(name = "findByName", query = "SELECT op FROM Operator op WHERE op.name = :name"),
+                @NamedQuery(name = "findByName", query = "SELECT op FROM Operator op WHERE LOWER(op.name) = :name"),
         })
 public class Operator {
 

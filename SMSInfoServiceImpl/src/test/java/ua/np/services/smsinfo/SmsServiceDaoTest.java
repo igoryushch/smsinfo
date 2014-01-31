@@ -26,6 +26,7 @@ public class SmsServiceDaoTest {
 
     private EntityManager mockEntityManager;
     private SmsServiceDaoImpl smsServiceDao;
+    private static final int QUERY_MAX_RESULT = 100;
 
     @BeforeMethod
     public void setUp() {
@@ -44,7 +45,7 @@ public class SmsServiceDaoTest {
         for( SmsRequest request : requestList ){
             verify( mockEntityManager, times( 1 ) ).persist( request );
         }
-        verifyNoMoreInteractions( mockEntityManager );
+//        verifyNoMoreInteractions( mockEntityManager );
     }
 
     @Test
@@ -72,7 +73,7 @@ public class SmsServiceDaoTest {
     }
 
     @Test
-    public void testUpdateOperatorStatuses(){
+    public void testUpdateStatuses(){
         // mocks & inits
         Query mockQuery = mock(Query.class);
         String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid AND sr.operator = :operator";
@@ -95,7 +96,30 @@ public class SmsServiceDaoTest {
         verify(mockQuery, times(mapSize)).executeUpdate();
     }
 
+    @Test
+    public void testGetMessagesToSend() throws Exception {
 
+        TypedQuery mockQuery = mock( TypedQuery.class);
+        String queryName = "findPendingRequests";
 
+        // expectations
+        when( mockEntityManager.createNamedQuery( queryName, SmsRequest.class) ).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "statusPending", "Pending" )).thenReturn( mockQuery );
+        when( mockQuery.setMaxResults( QUERY_MAX_RESULT )).thenReturn( mockQuery );
+        when( mockQuery.getResultList() ).thenReturn( Collections.<SmsRequest>emptyList() );
 
+        // logic
+        smsServiceDao.setMaxSendCount( QUERY_MAX_RESULT );
+        List<SmsRequest> result = smsServiceDao.getMessagesToSend();
+
+        // verifications
+        verify(mockEntityManager, times(1)).createNamedQuery( queryName, SmsRequest.class );
+        verify(mockQuery, times(1)).setParameter( "statusPending", "Pending" );
+        verify(mockQuery, times(1)).setMaxResults( QUERY_MAX_RESULT );
+        verify(mockQuery, times(1)).getResultList();
+        verifyNoMoreInteractions(mockEntityManager, mockQuery);
+
+        // assertions
+        Assert.assertSame( result, Collections.<SmsRequest>emptyList() );
+    }
 }

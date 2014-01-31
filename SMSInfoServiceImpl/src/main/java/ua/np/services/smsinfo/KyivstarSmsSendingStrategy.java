@@ -1,11 +1,9 @@
 package ua.np.services.smsinfo;
 
 import org.apache.http.client.methods.HttpPost;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.oxm.Unmarshaller;
 
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.util.List;
 
@@ -20,17 +18,12 @@ import java.util.List;
  * Date: 16.01.14
  */
 
-public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
+public class KyivstarSmsSendingStrategy implements SmsSendingStrategy {
 
-    @Value( "${kyivstarHost}" )
     private String operatorHost;
-    @Value( "${kyivstarHostUser}" )
     private String operatorLogin;
-    @Value( "${kyivstarHostPassword}" )
     private String operatorPassword;
-
     private Unmarshaller jaxbUnmarshaller;
-
     private OperatorRestClient operatorRestClient;
 
     @Override
@@ -40,36 +33,35 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         HttpPost postRequest = new HttpPost( operatorHost );
         InputStream responseInputStream = operatorRestClient.sendRequest( postRequest, xmlRequest );
         // unmarshall response
-        KyivstarAcceptanceResponse resultResponse = parseResponse(responseInputStream);
+        KyivstarAcceptanceResponse resultResponse = parseResponse( responseInputStream );
         // update operator message id & statuses
         List<KyivstarAcceptanceStatus> statusList = resultResponse.getStatus();
-        for (KyivstarAcceptanceStatus acceptanceStatus : statusList){
-            for(SmsRequest smsRequest : smsRequestList){
-                if( smsRequest.getId() == Long.valueOf( acceptanceStatus.getClid() ) ){
+        for( KyivstarAcceptanceStatus acceptanceStatus : statusList ) {
+            for( SmsRequest smsRequest : smsRequestList ) {
+                if( smsRequest.getId().equals( Long.valueOf( acceptanceStatus.getClid() ) ) ) {
 //                    smsRequest.setOperator(  );
                     smsRequest.setOperatorMessageId( acceptanceStatus.getMid() );
                     smsRequest.setStatus( acceptanceStatus.getValue() );
                 }
             }
         }
-
         return smsRequestList;
     }
 
     private KyivstarAcceptanceResponse parseResponse( InputStream responseInputStream ) {
         KyivstarAcceptanceResponse resultResponse = null;
         try {
-            resultResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal(new StreamSource(responseInputStream));
+            resultResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal( responseInputStream );
             return resultResponse;
-        } catch( IOException e ) {
+        } catch( JAXBException e ) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private String buildXmlRequest(List<SmsRequest> smsRequestList){
+    private String buildXmlRequest( List<SmsRequest> smsRequestList ) {
 
-        StringBuilder sb = new StringBuilder(  );
+        StringBuilder sb = new StringBuilder();
 
         sb.append( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
         sb.append( "<root xmlns=\"http://goldentele.com/cpa\">" );
@@ -79,7 +71,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy{
         sb.append( "<tid>1</tid>" );
         sb.append( "<messages>" );
 
-        for( SmsRequest request : smsRequestList ){
+        for( SmsRequest request : smsRequestList ) {
             sb.append( "<message><IDint>" + request.getId() + "</IDint><sin>" + request.getPhoneNumber() +
                     "</sin><body content-type=\"text/plain\">" + request.getMessageText() + "</body></message>" );
         }

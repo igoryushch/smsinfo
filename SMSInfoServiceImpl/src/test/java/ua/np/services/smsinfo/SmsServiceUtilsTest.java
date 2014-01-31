@@ -71,11 +71,10 @@ public class SmsServiceUtilsTest {
 
         SmsRequest request = smsServiceUtils.buildNewSmsRequest( params, systemName );
         Assert.assertEquals( request.getIncomingId(), incomingId );
-        Assert.assertEquals( request.getSytemName(), systemName );
+        Assert.assertEquals( request.getSystemName(), systemName );
         Assert.assertEquals( request.getPhoneNumber(), phoneNumber );
         Assert.assertEquals( request.getMessageText(), messageText );
         Assert.assertNotNull( request.getCreationDate() );
-        Assert.assertNotNull( request.getOperator() );
         Assert.assertNotNull( request.getStatus() );
         Assert.assertNotNull( request.getUpdateDate() );
     }

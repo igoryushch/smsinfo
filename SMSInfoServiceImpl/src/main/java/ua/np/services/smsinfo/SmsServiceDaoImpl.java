@@ -33,10 +33,12 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     }
 
     @Override
-    public void addRequests( List<SmsRequest> requests ) {
+    public List <SmsRequest> addRequests( List<SmsRequest> requests ) {
         for( SmsRequest smsRequest : requests ){
             entityManager.persist( smsRequest );
         }
+        entityManager.flush();
+        return requests;
     }
 
     @Override

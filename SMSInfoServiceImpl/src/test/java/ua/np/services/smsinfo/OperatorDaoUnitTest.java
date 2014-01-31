@@ -7,6 +7,8 @@ import org.testng.annotations.Test;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -82,5 +84,48 @@ public class OperatorDaoUnitTest {
         // assertions
         Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
         Assert.assertNotNull( actualOperator.getPhoneCodeMaping());
+    }
+
+    @Test
+    public void testGetOperatorByName() throws Exception {
+        // mocks & inits
+        String queryName = "findByName";
+        Operator expectedOperator = SmsServiceUnitTestSupport.newOperator( "Life" );
+
+        // expectations
+        when( mockEntityManager.createNamedQuery( queryName, Operator.class) ).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "name", expectedOperator.getName().toLowerCase() )).thenReturn( mockQuery );
+        when( mockQuery.getResultList() ).thenReturn( Arrays.asList( expectedOperator ) );
+
+        // logic
+        Operator actualOperator = operatorDao.getOperatorByName( expectedOperator.getName() );
+
+        // verifications
+        verify(mockEntityManager, times(1)).createNamedQuery( queryName, Operator.class );
+        verify(mockQuery, times(1)).setParameter( "name", expectedOperator.getName().toLowerCase() );
+        verify(mockQuery, times(1)).getResultList();
+        verifyNoMoreInteractions(mockEntityManager, mockQuery);
+
+        // assertions
+        Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
+    }
+
+    @Test
+    public void testFindAll() throws Exception {
+        String queryParam = "from " + Operator.class.getName();
+        // expectations
+        when(mockEntityManager.createQuery(queryParam)).thenReturn(mockQuery);
+        when(mockQuery.getResultList()).thenReturn( Collections.<Operator>emptyList());
+
+        // logic
+        List<Operator> operatorList = operatorDao.findAll();
+
+        // verifications
+        verify(mockEntityManager, times(1)).createQuery(queryParam);
+        verify(mockQuery, times(1)).getResultList();
+        verifyNoMoreInteractions(mockEntityManager, mockQuery);
+
+        // assertions
+        Assert.assertSame(operatorList, Collections.<Operator>emptyList());
     }
 }

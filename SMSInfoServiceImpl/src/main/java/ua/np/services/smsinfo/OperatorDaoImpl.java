@@ -40,7 +40,7 @@ public class OperatorDaoImpl implements OperatorDao {
 
     @Override
     public Operator getOperatorByName( String name ) {
-        List<Operator> resultList = entityManager.createNamedQuery( "findByName",Operator.class ).setParameter( "name", name ).getResultList();
+        List<Operator> resultList = entityManager.createNamedQuery( "findByName",Operator.class ).setParameter( "name", name.toLowerCase() ).getResultList();
         if( resultList.isEmpty() ) return null;
         return resultList.get( 0 );
     }

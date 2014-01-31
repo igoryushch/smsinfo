@@ -19,11 +19,11 @@ import java.util.Calendar;
         {
                 @NamedQuery(name = "findById", query = "SELECT sr FROM SmsRequest sr WHERE sr.id = :id"),
                 @NamedQuery(name = "findByIncomingId", query = "SELECT sr FROM SmsRequest sr WHERE sr.incomingId = :incomingId"),
-                @NamedQuery(name = "findBySystemName", query = "SELECT sr FROM SmsRequest sr WHERE sr.sytemName = :sytemName"),
-                @NamedQuery(name = "findBySystemNameAndDate", query = "SELECT sr FROM SmsRequest sr WHERE sr.sytemName = :sytemName and (sr.creationDate between :startDate and :endDate)"),
+                @NamedQuery(name = "findBySystemName", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName"),
+                @NamedQuery(name = "findBySystemNameAndDate", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName and (sr.creationDate between :startDate and :endDate)"),
                 @NamedQuery(name = "findByStatus", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :status"),
-                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operatorId = :operatorId"),
-                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operatorId in :operatorIdList"),
+                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.id = :operatorId"),
+                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.id in :operatorIdList"),
                 @NamedQuery(name = "findPendingRequests", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :statusPending")
         })
 public class SmsRequest {
@@ -35,7 +35,7 @@ public class SmsRequest {
     @Column(nullable = false)
     private String incomingId;
     @Column(nullable = false)
-    private String sytemName;
+    private String systemName;
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
@@ -54,9 +54,9 @@ public class SmsRequest {
     public SmsRequest() {
     }
 
-    public SmsRequest( String incomingId, String sytemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId ) {
+    public SmsRequest( String incomingId, String systemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId ) {
         this.incomingId = incomingId;
-        this.sytemName = sytemName;
+        this.systemName = systemName;
         this.phoneNumber = phoneNumber;
         this.messageText = messageText;
         this.creationDate = creationDate;
@@ -82,12 +82,12 @@ public class SmsRequest {
         this.incomingId = incomingId;
     }
 
-    public String getSytemName() {
-        return sytemName;
+    public String getSystemName() {
+        return systemName;
     }
 
-    public void setSytemName( String sytemName ) {
-        this.sytemName = sytemName;
+    public void setSystemName( String systemName ) {
+        this.systemName = systemName;
     }
 
     public String getPhoneNumber() {

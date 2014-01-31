@@ -4,7 +4,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -19,13 +18,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class ProxySettingsHolder {
 
-    @Value("${host}")
     private String proxyHost;
-    @Value("${port}")
     private String proxyPort;
-    @Value("${username}")
     private String proxyUsername;
-    @Value("${password}")
     private String proxyPassword;
     
     public CredentialsProvider newProxyCredential(){
@@ -55,4 +50,19 @@ public class ProxySettingsHolder {
         return proxyPassword;
     }
 
+    public void setProxyHost( String proxyHost ) {
+        this.proxyHost = proxyHost;
+    }
+
+    public void setProxyPort( String proxyPort ) {
+        this.proxyPort = proxyPort;
+    }
+
+    public void setProxyUsername( String proxyUsername ) {
+        this.proxyUsername = proxyUsername;
+    }
+
+    public void setProxyPassword( String proxyPassword ) {
+        this.proxyPassword = proxyPassword;
+    }
 }

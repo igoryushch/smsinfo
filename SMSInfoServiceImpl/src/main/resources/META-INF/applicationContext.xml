@@ -3,11 +3,15 @@
        xmlns="http://www.springframework.org/schema/beans"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <context:property-placeholder location="classpath:META-INF/dev.smsinfoservice.properties"/>
 
     <bean id="smsServiceDao" class="ua.np.services.smsinfo.SmsServiceDaoImpl">
         <property name="maxSendCount" value="100"/>
@@ -27,21 +31,57 @@
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
     </bean>
 
-    <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-        <property name="classesToBeBound">
-            <list>
-                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
-                <value>ua.np.services.smsinfo.KyivstarAcceptanceStatus</value>
-            </list>
+    <bean id="jaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
+        <constructor-arg type="java.lang.Class">
+            <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="operatorRsClient" class="ua.np.services.smsinfo.OperatorRestClientImpl">
+        <property name="proxyHost">
+            <value>${host}</value>
+        </property>
+        <property name="proxyPort">
+            <value>${port}</value>
+        </property>
+        <property name="proxyUsername">
+            <value>${username}</value>
+        </property>
+        <property name="proxyPassword">
+            <value>${password}</value>
         </property>
     </bean>
 
     <bean id="kyivstarSmsSendingStrategy" class="ua.np.services.smsinfo.KyivstarSmsSendingStrategy">
-        <property name="jaxbUnmarshaller" ref ="jaxb2Marshaller" />
+        <property name="operatorHost">
+            <value>${kyivstarHost}</value>
+        </property>
+        <property name="operatorLogin">
+            <value>${kyivstarHostUser}</value>
+        </property>
+        <property name="operatorPassword">
+            <value>${kyivstarHostPassword}</value>
+        </property>
+        <property name="jaxbUnmarshaller">
+            <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
+        </property>
+        <property name="operatorRestClient" ref="operatorRsClient"/>
     </bean>
 
     <bean id="lifeSmsSendingStrategy" class="ua.np.services.smsinfo.LifeSmsSendingStrategy">
-        <!--<property name="jaxbUnmarshaller" ref ="jaxb2Marshaller" />-->
+        <property name="operatorHost">
+            <value>${lifeHost}</value>
+        </property>
+        <property name="operatorAuthHost">
+            <value>${lifeAuthHost}</value>
+        </property>
+        <property name="operatorLogin">
+            <value>${lifeHostUser}</value>
+        </property>
+        <property name="operatorPassword">
+            <value>${lifeHostPassword}</value>
+        </property>
+        <property name="operatorRestClient" ref="operatorRsClient"/>
     </bean>
 
     <tx:annotation-driven/>
@@ -55,8 +95,14 @@
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
                 <property name="showSql" value="true" />
-                <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
             </bean>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect:org.hibernate.dialect.SQLServer2008Dialect}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto:validate}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql:false}</prop>
+            </props>
         </property>
     </bean>
 
