@@ -2,7 +2,7 @@ package ua.np.services.smsinfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -21,7 +21,7 @@ import javax.persistence.PersistenceContext;
  */
 
 @ContextConfiguration
-public class SmsInfoServiceIT extends AbstractTestNGSpringContextTests{
+public class SmsInfoServiceIT extends AbstractTransactionalTestNGSpringContextTests {
 
     @Autowired
     private SmsInfoService smsInfoService;
@@ -40,7 +40,7 @@ public class SmsInfoServiceIT extends AbstractTestNGSpringContextTests{
     @Test
     public void testSendMessages(){
         String response = smsInfoService.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(),"Awis" );
-        flushAndClear();
+//        flushAndClear();
         Assert.assertNotNull( response );
         Assert.assertEquals( response, SmsInfoServiceITUtils.getExpectedResponse() );
         testGetDeliveryStatusData();

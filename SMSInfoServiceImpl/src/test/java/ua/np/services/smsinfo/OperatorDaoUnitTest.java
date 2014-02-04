@@ -64,16 +64,16 @@ public class OperatorDaoUnitTest {
 
     @Test
     public void testFindAll() throws Exception {
-        String queryParam = "from " + Operator.class.getName();
+        String queryName = "findAll";
         // expectations
-        when(mockEntityManager.createQuery(queryParam)).thenReturn(mockQuery);
+        when(mockEntityManager.createNamedQuery(queryName, Operator.class)).thenReturn(mockQuery);
         when(mockQuery.getResultList()).thenReturn( Collections.<Operator>emptyList());
 
         // logic
         List<Operator> operatorList = operatorDao.findAll();
 
         // verifications
-        verify(mockEntityManager, times(1)).createQuery(queryParam);
+        verify(mockEntityManager, times(1)).createNamedQuery(queryName, Operator.class);
         verify(mockQuery, times(1)).getResultList();
         verifyNoMoreInteractions(mockEntityManager, mockQuery);
 

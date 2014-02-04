@@ -54,9 +54,9 @@ public class SmsServiceUtilsTest {
 
     @DataProvider(name = "requestParamsProvider")
     public static Object[][] requestParams(){
-        return new Object[][] { { "111111", "1C", "063", "0631234567", "Foo"}, { "222222", "1C","067", "0671234567", "Bar" },
-                                { "333333", "Awis","068", "0681234567", "FooBar" },{ "444444", "Awis","069", "0691234567", "BarFoo" },
-                                { "555555", "loyalty","095", "0951234567", "Foo" },{ "666666", "loyalty","096", "0961234567", "Foo" } };
+        return new Object[][] { { "111111", "1C", "063", "380631234567", "Foo"}, { "222222", "1C","067", "380671234567", "Bar" },
+                                { "333333", "Awis","068", "380681234567", "FooBar" },{ "444444", "Awis","069", "380691234567", "BarFoo" },
+                                { "555555", "loyalty","095", "380951234567", "Foo" },{ "666666", "loyalty","096", "380961234567", "Foo" } };
     }
 
     @Test(dataProvider = "requestParamsProvider")

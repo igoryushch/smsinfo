@@ -114,10 +114,10 @@ public class SmsServiceUnitTestSupport {
     public static List<SmsRequest> getExpectedRequestList(){
 
         return Arrays.asList(
-                new SmsRequest( "11111111111", "1C", "0661234567", "FooBar",
+                new SmsRequest( "11111111111", "1C", "380661234567", "FooBar",
                                 new GregorianCalendar(), new GregorianCalendar(),
                                 "Pending", newOperator( "Life:)" ), "321321312" ),
-                new SmsRequest( "121222222222", "1C", "0671234567", "BarFoo",
+                new SmsRequest( "121222222222", "1C", "380671234567", "BarFoo",
                                 new GregorianCalendar(), new GregorianCalendar(),
                                 "Pending", newOperator( "Life:)" ), "321321313" ) );
     }
