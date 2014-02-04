@@ -3,6 +3,7 @@ package ua.np.services.smsinfo;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,6 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
         for( SmsRequest smsRequest : requests ){
             entityManager.persist( smsRequest );
         }
-        entityManager.flush();
         return requests;
     }
 
@@ -77,5 +77,14 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
                     .setParameter( "operator", operator )
                     .executeUpdate();
         }
+    }
+
+    @Override
+    public List<SmsRequest> mergeMessages( List<SmsRequest> requests ) {
+        for( SmsRequest smsRequest : requests ){
+            smsRequest.setUpdateDate( new GregorianCalendar(  ) );
+            entityManager.merge( smsRequest );
+        }
+        return requests;
     }
 }

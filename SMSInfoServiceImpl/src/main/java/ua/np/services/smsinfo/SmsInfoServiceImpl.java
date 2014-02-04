@@ -30,14 +30,22 @@ public class SmsInfoServiceImpl implements SmsInfoService{
     @Override
     public String sendMessages( String xml, String systemName ) {
         List<SmsRequest> smsRequests = smsServiceUtils.getRequestsFromXmlString( xml, systemName );
-        smsServiceDao.addRequests( smsRequests );
-
+        saveRequests( smsRequests );
         return smsServiceUtils.buildAcceptedResponse( smsRequests );
+    }
+
+    public void saveRequests( List<SmsRequest> smsRequests ) {
+        smsServiceDao.addRequests( smsRequests );
     }
 
     @Override
     public String getDeliveryStatusData( String systemName ) {
-        return smsServiceUtils.buildDeliveryStatusResponse(smsServiceDao.getRequestsForSystem( systemName ));
+        return smsServiceUtils.buildDeliveryStatusResponse(readRequestsForSystem( systemName ));
+    }
+
+    @Override
+    public List<SmsRequest> readRequestsForSystem( String systemName ){
+        return smsServiceDao.getRequestsForSystem( systemName );
     }
 
     @Override

@@ -45,7 +45,7 @@ public class LifeSendingStrategyUnitTest {
     @Test
     public void testSend(){
 
-        List<SmsRequest> actualList = smsSendingStrategy.send( SmsServiceUnitTestSupport.getTestRequestList() );
+        List<SmsRequest> actualList = smsSendingStrategy.send( SmsServiceUnitTestSupport.getTestRequestList(),SmsServiceUnitTestSupport.getTestOperator() );
         Assert.assertTrue( actualList.size() == 5 );
         for( SmsRequest smsRequest : actualList ){
             Assert.assertNotNull( smsRequest.getOperatorMessageId(), "Operator message id was null" );

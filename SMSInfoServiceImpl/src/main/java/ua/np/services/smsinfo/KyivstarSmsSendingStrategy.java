@@ -27,7 +27,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy {
     private OperatorRestClient operatorRestClient;
 
     @Override
-    public List<SmsRequest> send( List<SmsRequest> smsRequestList ) {
+    public List<SmsRequest> send( List<SmsRequest> smsRequestList, Operator operator ) {
 
         String xmlRequest = buildXmlRequest( smsRequestList );
         HttpPost postRequest = new HttpPost( operatorHost );
@@ -38,8 +38,8 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy {
         List<KyivstarAcceptanceStatus> statusList = resultResponse.getStatus();
         for( KyivstarAcceptanceStatus acceptanceStatus : statusList ) {
             for( SmsRequest smsRequest : smsRequestList ) {
-                if( smsRequest.getId().equals( Long.valueOf( acceptanceStatus.getClid() ) ) ) {
-//                    smsRequest.setOperator(  );
+                if( smsRequest.getSmsRequestId().equals( Long.valueOf( acceptanceStatus.getClid() ) ) ) {
+                    smsRequest.setOperator( operator );
                     smsRequest.setOperatorMessageId( acceptanceStatus.getMid() );
                     smsRequest.setStatus( acceptanceStatus.getValue() );
                 }
@@ -72,7 +72,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy {
         sb.append( "<messages>" );
 
         for( SmsRequest request : smsRequestList ) {
-            sb.append( "<message><IDint>" + request.getId() + "</IDint><sin>" + request.getPhoneNumber() +
+            sb.append( "<message><IDint>" + request.getSmsRequestId() + "</IDint><sin>" + request.getPhoneNumber() +
                     "</sin><body content-type=\"text/plain\">" + request.getMessageText() + "</body></message>" );
         }
 

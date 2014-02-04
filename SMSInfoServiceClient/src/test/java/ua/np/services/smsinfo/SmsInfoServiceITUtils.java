@@ -1,6 +1,6 @@
 package ua.np.services.smsinfo;
 
-import java.util.GregorianCalendar;
+import java.util.*;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -26,8 +26,8 @@ public class SmsInfoServiceITUtils {
                 "<Value name=\"ChangesUUID\"><Type>String</Type><Data>null</Data></Value>" +
                 "<ValueTable name=\"StatusData\"><Columns><Column><Name>IdInternal</Name></Column>" +
                 "<Column><Name>CurrentStatus</Name></Column></Columns><Rows><Row><Value name=\"IdInternal\">" +
-                "<Type>String</Type><Data>11111111111</Data></Value><Value name=\"CurrentStatus\"><Type>String</Type>" +
-                "<Data>Pending</Data></Value></Row><Row><Value name=\"IdInternal\"><Type>String</Type><Data>121222222222</Data></Value>" +
+                "<Type>String</Type><Data>03213210321</Data></Value><Value name=\"CurrentStatus\"><Type>String</Type>" +
+                "<Data>Pending</Data></Value></Row><Row><Value name=\"IdInternal\"><Type>String</Type><Data>23211654321</Data></Value>" +
                 "<Value name=\"CurrentStatus\"><Type>String</Type><Data>Pending</Data></Value></Row></Rows></ValueTable></Structure>";
         return result;
     }
@@ -43,11 +43,11 @@ public class SmsInfoServiceITUtils {
                 "<Structure>" +
                 "<Value name=\"id\">" +
                 "<Type>String</Type>" +
-                "<Data>11111111111</Data>" +
+                "<Data>03213210321</Data>" +
                 "</Value>" +
                 "<Value name=\"phone\">" +
                 "<Type>String</Type>" +
-                "<Data>0661234567</Data>" +
+                "<Data>0962276147</Data>" +
                 "</Value>" +
                 "<Value name=\"text\">" +
                 "<Type>String</Type>" +
@@ -57,11 +57,11 @@ public class SmsInfoServiceITUtils {
                 "<Structure>" +
                 "<Value name=\"id\">" +
                 "<Type>String</Type>" +
-                "<Data>121222222222</Data>" +
+                "<Data>23211654321</Data>" +
                 "</Value>" +
                 "<Value name=\"phone\">" +
                 "<Type>String</Type>" +
-                "<Data>0671234567</Data>" +
+                "<Data>0955942730</Data>" +
                 "</Value>" +
                 "<Value name=\"text\">" +
                 "<Type>String</Type>" +
@@ -76,12 +76,29 @@ public class SmsInfoServiceITUtils {
 
     public static String getExpectedResponse(){
         String response = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<Array><Structure><Value name=\"IDIncoming\"><Type>String</Type><Data>11111111111</Data></Value>" +
+                "<Array><Structure><Value name=\"IDIncoming\"><Type>String</Type><Data>03213210321</Data></Value>" +
                 "<Value name=\"IDInternal\"><Type>String</Type><Data>1</Data></Value>" +
-                "<Value name=\"IDIncoming\"><Type>String</Type><Data>121222222222</Data></Value>" +
+                "<Value name=\"IDIncoming\"><Type>String</Type><Data>23211654321</Data></Value>" +
                 "<Value name=\"IDInternal\"><Type>String</Type><Data>2</Data></Value></Structure></Array>";
 
         return response;
+    }
+
+    public static List<SmsRequest> getTestRequestList(){
+        List<SmsRequest> result = new ArrayList<SmsRequest>(  );
+        for( int i = 1; i < 6;i++ ){
+            result.add( new SmsRequest( "000"+i,"Awis","0671234567","FooBar",
+                    new GregorianCalendar(  ),new GregorianCalendar(  ),
+                    "Pending",newOperator( "Life:)" ),"321321312") );
+        }
+        return result;
+    }
+
+    public static Operator newOperator( String name ){
+        Set<String> codes = new HashSet<String>(  );
+        codes.add( "066" );
+        codes.add( "095" );
+        return new Operator( name, codes );
     }
 
 }

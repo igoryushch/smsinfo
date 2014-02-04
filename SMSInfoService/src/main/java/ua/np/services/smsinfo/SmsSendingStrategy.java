@@ -15,6 +15,5 @@ import java.util.List;
 
 public interface SmsSendingStrategy {
 
-    public List<SmsRequest> send(List<SmsRequest> smsRequestList);
-
+    public List<SmsRequest> send(List<SmsRequest> smsRequestList, Operator operator);
 }

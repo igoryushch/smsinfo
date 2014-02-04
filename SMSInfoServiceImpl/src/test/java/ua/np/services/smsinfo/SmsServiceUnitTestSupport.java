@@ -39,7 +39,7 @@ public class SmsServiceUnitTestSupport {
         List<SmsRequest> result = getTestRequestList();
         Long i = 1L;
         for( SmsRequest smsRequest : result ){
-            smsRequest.setId( i );
+            smsRequest.setSmsRequestId( i );
             i++;
         }
         return result;

@@ -22,7 +22,7 @@ public class OperatorRestClientStub implements OperatorRestClient {
         return getKyivstarTestInputStream();
     }
 
-    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword){
+    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword, String authUrl){
         return getLifeTestInputStream();
     }
 

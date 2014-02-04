@@ -32,6 +32,7 @@ public class SmsInfoServiceIT extends AbstractTestNGSpringContextTests{
     @Test
     public void testConfiguration() throws Exception {
         Assert.assertNotNull( applicationContext.getBean( "smsInfoServiceWsServer" ) );
+        Assert.assertNotNull( applicationContext.getBean( "transactionManager" ) );
         Assert.assertNotNull( smsInfoService );
         Assert.assertNotNull( entityManager );
     }
@@ -39,14 +40,21 @@ public class SmsInfoServiceIT extends AbstractTestNGSpringContextTests{
     @Test
     public void testSendMessages(){
         String response = smsInfoService.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(),"Awis" );
+        flushAndClear();
         Assert.assertNotNull( response );
         Assert.assertEquals( response, SmsInfoServiceITUtils.getExpectedResponse() );
         testGetDeliveryStatusData();
+        testOperatorInteraction();
     }
 
     public void testGetDeliveryStatusData(){
         String response = smsInfoService.getDeliveryStatusData( "Awis" );
         Assert.assertEquals( response, SmsInfoServiceITUtils.getStatusDataResponseString() );
+    }
+
+    public void testOperatorInteraction(){
+        SmsSendingJob sendingJob = applicationContext.getBean( "smsSendingJob",SmsSendingJob.class );
+        sendingJob.doSend();
     }
 
     public void testUpdateStatuses(){
@@ -55,5 +63,12 @@ public class SmsInfoServiceIT extends AbstractTestNGSpringContextTests{
 
     public void updateOperatorDataInSms(){
 
+    }
+
+    void flushAndClear() {
+        if (entityManager != null) {
+            entityManager.flush();
+            entityManager.clear();
+        }
     }
 }

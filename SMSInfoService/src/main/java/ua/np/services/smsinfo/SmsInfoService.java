@@ -3,6 +3,7 @@ package ua.np.services.smsinfo;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,4 +29,7 @@ public interface SmsInfoService {
 //    @WebMethod
     public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator );
 
+    public List<SmsRequest> readRequestsForSystem( String systemName );
+
+    public void saveRequests( List<SmsRequest> smsRequests );
 }

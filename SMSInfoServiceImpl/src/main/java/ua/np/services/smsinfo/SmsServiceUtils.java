@@ -57,10 +57,6 @@ public class SmsServiceUtils {
         return "Pending";
     }
 
-    public Operator resolveOperator( String phoneNumber ){
-        return operatorDao.getOperatorByPhoneCode( getPhoneCodeFromNumber(phoneNumber) ) ;
-    }
-
     public String getPhoneCodeFromNumber(String phoneNumber){
         return phoneNumber.substring( phoneNumber.length() - 10, phoneNumber.length() - 7);
     }
@@ -72,7 +68,7 @@ public class SmsServiceUtils {
         String template = "<Value name=\"IDIncoming\"><Type>String</Type><Data>{0}</Data></Value><Value name=\"IDInternal\"><Type>String</Type><Data>{1}</Data></Value>";
 
         for (SmsRequest request : smsRequests){
-            sb.append( template.replace( "{0}", request.getIncomingId() ).replace( "{1}", String.valueOf( request.getId() ) ) );
+            sb.append( template.replace( "{0}", request.getIncomingId() ).replace( "{1}", String.valueOf( request.getSmsRequestId() ) ) );
         }
 
         sb.append( "</Structure></Array>" );

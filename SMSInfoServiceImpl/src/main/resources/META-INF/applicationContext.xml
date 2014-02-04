@@ -4,14 +4,16 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:property-placeholder location="classpath:META-INF/dev.smsinfoservice.properties"/>
+    <!--<context:property-placeholder location="classpath:META-INF/dev.smsinfoservice.properties,META-INF/dev.operatorsGateway.properties,META-INF/dev.proxySettings.properties"/>-->
 
     <bean id="smsServiceDao" class="ua.np.services.smsinfo.SmsServiceDaoImpl">
         <property name="maxSendCount" value="100"/>
@@ -29,39 +31,28 @@
         <property name="operatorDao" ref="operatorDao"/>
         <property name="smsServiceDao" ref="smsServiceDao"/>
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
+        <property name="maxSmsCountPerReqest" value="50"/>
     </bean>
 
     <bean id="jaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
-        <constructor-arg type="java.lang.Class">
-            <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+        <constructor-arg>
+            <list>
+                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+            </list>
         </constructor-arg>
     </bean>
 
     <bean id="operatorRsClient" class="ua.np.services.smsinfo.OperatorRestClientImpl">
-        <property name="proxyHost">
-            <value>${host}</value>
-        </property>
-        <property name="proxyPort">
-            <value>${port}</value>
-        </property>
-        <property name="proxyUsername">
-            <value>${username}</value>
-        </property>
-        <property name="proxyPassword">
-            <value>${password}</value>
-        </property>
+        <property name="proxyHost" value="${proxy.host}"/>
+        <property name="proxyPort" value="${proxy.port}"/>
+        <property name="proxyUsername" value="${proxy.username}"/>
+        <property name="proxyPassword" value="${proxy.password}"/>
     </bean>
 
     <bean id="kyivstarSmsSendingStrategy" class="ua.np.services.smsinfo.KyivstarSmsSendingStrategy">
-        <property name="operatorHost">
-            <value>${kyivstarHost}</value>
-        </property>
-        <property name="operatorLogin">
-            <value>${kyivstarHostUser}</value>
-        </property>
-        <property name="operatorPassword">
-            <value>${kyivstarHostPassword}</value>
-        </property>
+        <property name="operatorHost" value="${kyivstar.host}"/>
+        <property name="operatorLogin" value="${kyivstar.hostUser}"/>
+        <property name="operatorPassword" value="${kyivstar.hostPassword}"/>
         <property name="jaxbUnmarshaller">
             <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
         </property>
@@ -69,18 +60,10 @@
     </bean>
 
     <bean id="lifeSmsSendingStrategy" class="ua.np.services.smsinfo.LifeSmsSendingStrategy">
-        <property name="operatorHost">
-            <value>${lifeHost}</value>
-        </property>
-        <property name="operatorAuthHost">
-            <value>${lifeAuthHost}</value>
-        </property>
-        <property name="operatorLogin">
-            <value>${lifeHostUser}</value>
-        </property>
-        <property name="operatorPassword">
-            <value>${lifeHostPassword}</value>
-        </property>
+        <property name="operatorHost" value="${life.host}"/>
+        <property name="operatorAuthHost" value="${life.authHost}"/>
+        <property name="operatorLogin" value="${life.hostUser}"/>
+        <property name="operatorPassword" value="${life.hostPassword}"/>
         <property name="operatorRestClient" ref="operatorRsClient"/>
     </bean>
 
@@ -110,35 +93,51 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <tx:advice id="smsServiceDaoTxAdvice">
-        <tx:attributes>
-            <tx:method name="*" propagation="MANDATORY"/>
-        </tx:attributes>
-    </tx:advice>
+    <!--<context:component-scan base-package="ua.np.services.smsinfo"/>-->
 
-    <tx:advice id="operatorDaoTxAdvice">
-        <tx:attributes>
-            <tx:method name="*" propagation="MANDATORY"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <!-- the transactional advice (what 'happens'; see the <aop:advisor/> bean below) -->
-    <tx:advice id="smsInfoServiceTxAdvice">
-        <!-- the transactional semantics... -->
-        <tx:attributes>
-            <!-- all methods starting with 'get' are read-only -->
-            <tx:method name="get*" read-only="true"/>
-            <!-- other methods use the default transaction settings (see below) -->
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <!-- ensure that the above transactional advice runs for any execution
-      of an operation defined by the service interface -->
     <aop:config>
-        <aop:pointcut id="smsInfoServiceOperations" expression="bean(smsInfoService) &amp; execution(* ua.np.services.smsinfo.SmsInfoService.*(..))"/>
-        <aop:advisor advice-ref="smsInfoServiceTxAdvice" pointcut-ref="smsInfoServiceOperations"/>
-        <aop:advisor advice-ref="operatorDaoTxAdvice" pointcut-ref="smsInfoServiceOperations"/>
+        <aop:pointcut id="serviceOperation" expression="execution(* ua.np.services.smsinfo.SmsInfoServiceImpl.*(..))"/>
+        <aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvise"/>
     </aop:config>
+
+    <tx:advice id="txAdvise" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="update*" propagation="REQUIRED"/>
+            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--<tx:advice id="smsServiceDaoTxAdvice">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="*" propagation="MANDATORY"/>-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--<tx:advice id="operatorDaoTxAdvice">-->
+        <!--<tx:attributes>-->
+            <!--<tx:method name="*" propagation="MANDATORY"/>-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--&lt;!&ndash; the transactional advice (what 'happens'; see the <aop:advisor/> bean below) &ndash;&gt;-->
+    <!--<tx:advice id="smsInfoServiceTxAdvice">-->
+        <!--&lt;!&ndash; the transactional semantics... &ndash;&gt;-->
+        <!--<tx:attributes>-->
+            <!--&lt;!&ndash; all methods starting with 'read' are read-only &ndash;&gt;-->
+            <!--<tx:method name="read*" read-only="true"/>-->
+            <!--&lt;!&ndash; other methods use the default transaction settings (see below) &ndash;&gt;-->
+            <!--<tx:method name="persist*"/>-->
+            <!--<tx:method name="update*"/>-->
+        <!--</tx:attributes>-->
+    <!--</tx:advice>-->
+
+    <!--&lt;!&ndash; ensure that the above transactional advice runs for any execution-->
+      <!--of an operation defined by the service interface &ndash;&gt;-->
+    <!--<aop:config>-->
+        <!--<aop:pointcut id="smsInfoServiceOperations" expression="bean(smsInfoService) &amp; execution(* ua.np.services.smsinfo.SmsInfoService.*(..))"/>-->
+        <!--<aop:advisor advice-ref="smsInfoServiceTxAdvice" pointcut-ref="smsInfoServiceOperations"/>-->
+        <!--<aop:advisor advice-ref="operatorDaoTxAdvice" pointcut-ref="smsInfoServiceOperations"/>-->
+    <!--</aop:config>-->
 
 </beans>

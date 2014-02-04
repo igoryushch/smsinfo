@@ -27,4 +27,5 @@ public interface SmsServiceDao {
 
     public void updateStatuses( Map<String, String> statusMap, Operator operator );
 
+    public List<SmsRequest> mergeMessages(List <SmsRequest> requests);
 }

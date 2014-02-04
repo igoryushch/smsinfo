@@ -1,5 +1,8 @@
 package ua.np.services.smsinfo;
 
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -19,7 +22,7 @@ import java.util.Map;
  * Date: 29.01.14
  */
 
-public class SmsSendingJob {
+public class SmsSendingJob implements Job {
 
     private SmsServiceDao smsServiceDao;
     private OperatorDao operatorDao;
@@ -28,6 +31,7 @@ public class SmsSendingJob {
     private SmsServiceUtils smsServiceUtils;
     @Autowired
     private ApplicationContext applicationContext;
+    private int maxSmsCountPerReqest;
 
     public void doSend(){
 
@@ -42,7 +46,7 @@ public class SmsSendingJob {
             for( Map.Entry<Operator, List<SmsRequest>> entry : sendingMap.entrySet()){
                 Operator operator = entry.getKey();
                 if( operator != null ) {
-                    invokeSendingStrategy(operator, entry.getValue());
+//                    invokeSendingStrategy(operator, entry.getValue());
                 }
             }
         }
@@ -50,7 +54,8 @@ public class SmsSendingJob {
 
     private void invokeSendingStrategy( Operator operator, List<SmsRequest> value ) {
         SmsSendingStrategy sendingStrategy = getSendingStrategy(operator);
-        sendingStrategy.send( value );
+        sendingStrategy.send( value, operator );
+        smsServiceDao.mergeMessages( value );
     }
 
     private SmsSendingStrategy getSendingStrategy( Operator operator ) {
@@ -64,7 +69,8 @@ public class SmsSendingJob {
             if( !result.containsKey( operator ) ) {
                 result.put( operator, new ArrayList<SmsRequest>(  ) );
             }
-            result.get( operator ).add( request );
+            if( result.get( operator ).size() < maxSmsCountPerReqest )
+                result.get( operator ).add( request );
         }
         return result;
     }
@@ -74,7 +80,8 @@ public class SmsSendingJob {
             this.operators = operatorDao.findAll();
 
         if( this.defaultOperator == null )
-            this.defaultOperator = operatorDao.getDefaultOperator();
+            this.defaultOperator = getDefaultOperator();
+
 
         for( Operator operator : operators ) {
             for(String code : operator.getPhoneCodeMaping()){
@@ -83,6 +90,16 @@ public class SmsSendingJob {
             }
         }
         return defaultOperator;
+    }
+
+    private Operator getDefaultOperator(){
+        for( Operator operator : operators ) {
+            for(String code : operator.getPhoneCodeMaping()){
+                if( "000".equals( code ) )
+                    return operator;
+            }
+        }
+        return null;
     }
 
     public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
@@ -95,5 +112,14 @@ public class SmsSendingJob {
 
     public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
         this.smsServiceUtils = smsServiceUtils;
+    }
+
+    public void setMaxSmsCountPerReqest( int maxSmsCountPerReqest ) {
+        this.maxSmsCountPerReqest = maxSmsCountPerReqest;
+    }
+
+    @Override
+    public void execute( JobExecutionContext jobExecutionContext ) throws JobExecutionException {
+        doSend();
     }
 }

@@ -58,7 +58,7 @@ public class KyivstarSendingStrategyUnitTest {
     @Test
     public void testSend(){
 
-        List<SmsRequest> actualList = smsSendingStrategy.send( SmsServiceUnitTestSupport.getTestRequestListWithIds() );
+        List<SmsRequest> actualList = smsSendingStrategy.send( SmsServiceUnitTestSupport.getTestRequestListWithIds(),SmsServiceUnitTestSupport.getTestOperator() );
         Assert.assertTrue( actualList.size() == 5 );
         for( SmsRequest smsRequest : actualList ){
             Assert.assertNotNull( smsRequest.getOperatorMessageId(), "Operator message id was null" );
@@ -98,7 +98,7 @@ public class KyivstarSendingStrategyUnitTest {
             String output = (String) method.invoke(smsSendingStrategy, requestList);
             Assert.assertTrue( output.contains( "<?xml version=\"1.0\" encoding=\"UTF-8\"?><root xmlns=\"http://goldentele.com/cpa\">" ) );
             for( SmsRequest smsRequest : requestList ){
-                String expected = "<message><IDint>" + smsRequest.getId() + "</IDint><sin>" + smsRequest.getPhoneNumber() +
+                String expected = "<message><IDint>" + smsRequest.getSmsRequestId() + "</IDint><sin>" + smsRequest.getPhoneNumber() +
                         "</sin><body content-type=\"text/plain\">" + smsRequest.getMessageText() + "</body></message>";
                 Assert.assertTrue( output.contains( expected ) );
             }

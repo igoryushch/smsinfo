@@ -39,54 +39,6 @@ public class OperatorDaoUnitTest {
     }
 
     @Test
-    public void testGetOperatorByPhoneCode(){
-        // mocks & inits
-        String queryName = "findByPhoneCode";
-        Operator expectedOperator = SmsServiceUnitTestSupport.newOperator( "Life" );
-
-        // expectations
-        when( mockEntityManager.createNamedQuery( queryName, Operator.class) ).thenReturn( mockQuery );
-        when( mockQuery.setParameter( "code", "063")).thenReturn( mockQuery );
-        when( mockQuery.getResultList() ).thenReturn( Arrays.asList( expectedOperator ) );
-
-        Operator actualOperator = operatorDao.getOperatorByPhoneCode( "063" );
-
-        // verifications
-        verify(mockEntityManager, times(1)).createNamedQuery( queryName, Operator.class );
-        verify(mockQuery, times(1)).setParameter( "code", "063" );
-        verify(mockQuery, times(1)).getResultList();
-        verifyNoMoreInteractions(mockEntityManager, mockQuery);
-
-        // assertions
-        Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
-        Assert.assertNotNull( actualOperator.getPhoneCodeMaping());
-    }
-
-    @Test
-    public void testGetDefaultOperator(){
-        // mocks & inits
-        String queryName = "findByPhoneCode";
-        Operator expectedOperator = SmsServiceUnitTestSupport.newOperator( "Life" );
-
-        // expectations
-        when( mockEntityManager.createNamedQuery( queryName, Operator.class) ).thenReturn( mockQuery );
-        when( mockQuery.setParameter( "code", "000")).thenReturn( mockQuery );
-        when( mockQuery.getResultList() ).thenReturn( Arrays.asList( expectedOperator ) );
-
-        Operator actualOperator = operatorDao.getDefaultOperator();
-
-        // verifications
-        verify(mockEntityManager, times(1)).createNamedQuery( queryName, Operator.class );
-        verify(mockQuery, times(1)).setParameter( "code", "000" );
-        verify(mockQuery, times(1)).getResultList();
-        verifyNoMoreInteractions(mockEntityManager, mockQuery);
-
-        // assertions
-        Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
-        Assert.assertNotNull( actualOperator.getPhoneCodeMaping());
-    }
-
-    @Test
     public void testGetOperatorByName() throws Exception {
         // mocks & inits
         String queryName = "findByName";

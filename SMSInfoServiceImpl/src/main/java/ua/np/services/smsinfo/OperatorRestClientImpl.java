@@ -38,7 +38,7 @@ public class OperatorRestClientImpl implements OperatorRestClient {
 
     public InputStream sendRequest(HttpPost postRequest, String xmlRequest){
 
-        HttpClient httpClient = buildHttpClient( postRequest, null, null );
+        HttpClient httpClient = buildHttpClient( postRequest, null, null, null );
 
         HttpResponse response = makeRequest( httpClient, xmlRequest, postRequest );
 
@@ -52,9 +52,9 @@ public class OperatorRestClientImpl implements OperatorRestClient {
         return null;
     }
 
-    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword){
+    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword, String authUrl){
 
-        HttpClient httpClient = buildHttpClient( postRequest, operatorLogin, operatorPassword );
+        HttpClient httpClient = buildHttpClient( postRequest, operatorLogin, operatorPassword, authUrl );
 
         HttpResponse response = makeRequest( httpClient, xmlRequest, postRequest );
 
@@ -90,7 +90,7 @@ public class OperatorRestClientImpl implements OperatorRestClient {
         return null;
     }
 
-    public HttpClient buildHttpClient( HttpPost postRequest, String operatorLogin, String operatorPassword ){
+    public HttpClient buildHttpClient( HttpPost postRequest, String operatorLogin, String operatorPassword, String authUrl ){
         CredentialsProvider credsProvider = new BasicCredentialsProvider();
         credsProvider.setCredentials(
                 new AuthScope(proxyHost, Integer.valueOf( proxyPort )),
@@ -98,7 +98,7 @@ public class OperatorRestClientImpl implements OperatorRestClient {
 
         if( operatorLogin != null && operatorPassword != null ){
             credsProvider.setCredentials(
-                    new AuthScope(postRequest.getURI().toString(), AuthScope.ANY_PORT),
+                    new AuthScope(getAuthUrl( authUrl, postRequest ), AuthScope.ANY_PORT),
                     new UsernamePasswordCredentials( operatorLogin, operatorPassword ));
         }
 
@@ -114,6 +114,10 @@ public class OperatorRestClientImpl implements OperatorRestClient {
         postRequest.setConfig( config );
 
         return httpClient;
+    }
+
+    private String getAuthUrl(String authUrl, HttpPost postRequest ){
+        return authUrl == null ? postRequest.getURI().toString() : authUrl;
     }
 
     public void setProxyHost( String proxyHost ) {

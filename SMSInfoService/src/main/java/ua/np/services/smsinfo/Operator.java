@@ -18,6 +18,7 @@ import java.util.Set;
 @Entity
 @NamedQueries(
         {
+                @NamedQuery(name = "findAll", query = "SELECT op FROM Operator op"),
                 @NamedQuery(name = "findByPhoneCode", query = "SELECT op FROM Operator op WHERE op.phoneCodes = :code"),
                 @NamedQuery(name = "findByName", query = "SELECT op FROM Operator op WHERE LOWER(op.name) = :name"),
         })
@@ -25,10 +26,10 @@ public class Operator {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long operatorId;
     @Column(nullable = false)
     private String name;
-    @ElementCollection(targetClass = String.class)
+    @ElementCollection(targetClass = String.class,fetch = FetchType.EAGER)
     @CollectionTable(
             name = "phoneCodeMapping",
             joinColumns =
@@ -48,12 +49,12 @@ public class Operator {
         this.phoneCodes = new HashSet<>(  );
     }
 
-    public Long getId() {
-        return id;
+    public Long getOperatorId() {
+        return operatorId;
     }
 
-    public void setId( Long id ) {
-        this.id = id;
+    public void setOperatorId( Long id ) {
+        this.operatorId = id;
     }
 
     public String getName() {

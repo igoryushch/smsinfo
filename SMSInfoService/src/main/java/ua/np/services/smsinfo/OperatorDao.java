@@ -14,8 +14,6 @@ import java.util.List;
  */
 
 public interface OperatorDao {
-    public Operator getOperatorByPhoneCode(String phoneCode);
-    public Operator getDefaultOperator();
     public Operator getOperatorByName(String name);
     public List<Operator> findAll();
 }

@@ -8,20 +8,12 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="proxySettings.properties,operatorGateway.properties" ignore-unresolvable="true"/>
+    <context:property-placeholder location="proxySettings.properties"/>
     <bean id="proxySettingsHolder" class="ua.np.services.smsinfo.ProxySettingsHolder" >
-        <property name="proxyHost">
-            <value>${host}</value>
-        </property>
-        <property name="proxyPort">
-            <value>${port}</value>
-        </property>
-        <property name="proxyUsername">
-            <value>${username}</value>
-        </property>
-        <property name="proxyPassword">
-            <value>${password}</value>
-        </property>
+        <property name="proxyHost" value="${proxy.host}"/>
+        <property name="proxyPort" value="${proxy.port}"/>
+        <property name="proxyUsername" value="${proxy.username}"/>
+        <property name="proxyPassword" value="${proxy.password}"/>
     </bean>
 
 </beans>

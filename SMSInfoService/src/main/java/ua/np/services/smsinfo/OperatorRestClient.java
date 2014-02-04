@@ -18,6 +18,6 @@ import java.io.InputStream;
 public interface OperatorRestClient {
 
     public InputStream sendRequest(HttpPost postRequest, String xmlRequest);
-    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword);
+    public InputStream sendRequest(HttpPost postRequest, String xmlRequest, String operatorLogin, String operatorPassword, String authUrl);
 
 }

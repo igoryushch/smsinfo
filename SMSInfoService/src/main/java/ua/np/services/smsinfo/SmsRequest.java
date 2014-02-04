@@ -17,20 +17,20 @@ import java.util.Calendar;
 @Entity
 @NamedQueries(
         {
-                @NamedQuery(name = "findById", query = "SELECT sr FROM SmsRequest sr WHERE sr.id = :id"),
+                @NamedQuery(name = "findById", query = "SELECT sr FROM SmsRequest sr WHERE sr.smsRequestId = :id"),
                 @NamedQuery(name = "findByIncomingId", query = "SELECT sr FROM SmsRequest sr WHERE sr.incomingId = :incomingId"),
                 @NamedQuery(name = "findBySystemName", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName"),
                 @NamedQuery(name = "findBySystemNameAndDate", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName and (sr.creationDate between :startDate and :endDate)"),
                 @NamedQuery(name = "findByStatus", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :status"),
-                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.id = :operatorId"),
-                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.id in :operatorIdList"),
+                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.operatorId = :operatorId"),
+                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.operatorId in :operatorIdList"),
                 @NamedQuery(name = "findPendingRequests", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :statusPending")
         })
 public class SmsRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long smsRequestId;
 
     @Column(nullable = false)
     private String incomingId;
@@ -66,12 +66,12 @@ public class SmsRequest {
         this.operatorMessageId = operatorMessageId;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSmsRequestId() {
+        return smsRequestId;
     }
 
-    public void setId( Long id ) {
-        this.id = id;
+    public void setSmsRequestId( Long id ) {
+        this.smsRequestId = id;
     }
 
     public String getIncomingId() {
@@ -95,7 +95,10 @@ public class SmsRequest {
     }
 
     public void setPhoneNumber( String phoneNumber ) {
-        this.phoneNumber = phoneNumber;
+        if( phoneNumber.length() == 10 )
+            this.phoneNumber = "38" + phoneNumber;
+        else
+            this.phoneNumber = phoneNumber;
     }
 
     public String getMessageText() {

@@ -67,8 +67,6 @@ public class SmsServiceUtilsTest {
         params.put( "phone", phoneNumber );
         params.put( "text", messageText );
 
-        when( mockedOperatorDao.getOperatorByPhoneCode( phoneCode ) ).thenReturn( SmsServiceUnitTestSupport.newOperator( "Life" ) );
-
         SmsRequest request = smsServiceUtils.buildNewSmsRequest( params, systemName );
         Assert.assertEquals( request.getIncomingId(), incomingId );
         Assert.assertEquals( request.getSystemName(), systemName );
@@ -82,13 +80,6 @@ public class SmsServiceUtilsTest {
     @Test
     public void testGetInitialStatus(){
         Assert.assertEquals( smsServiceUtils.getInitialStatus(), "Pending" );
-    }
-
-    @Test
-    public void testResolveOperator(){
-        when( mockedOperatorDao.getOperatorByPhoneCode( "063" ) ).thenReturn( SmsServiceUnitTestSupport.newOperator( "Life" ) );
-        Assert.assertEquals( smsServiceUtils.resolveOperator( "0631234567" ).getName(),"Life" );
-        verify( mockedOperatorDao, times( 1 ) ).getOperatorByPhoneCode( "063" );
     }
 
     @Test

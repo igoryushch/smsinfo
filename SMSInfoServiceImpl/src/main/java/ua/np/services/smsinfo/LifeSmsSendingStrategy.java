@@ -31,17 +31,18 @@ public class LifeSmsSendingStrategy implements SmsSendingStrategy {
     private OperatorRestClient operatorRestClient;
 
     @Override
-    public List<SmsRequest> send( List<SmsRequest> smsRequestList ) {
+    public List<SmsRequest> send( List<SmsRequest> smsRequestList, Operator operator ) {
 
         String xmlRequest = buildXmlRequest( smsRequestList );
         HttpPost postRequest = new HttpPost( operatorHost );
-        InputStream responseInputStream = operatorRestClient.sendRequest( postRequest, xmlRequest, operatorLogin, operatorPassword );
+        InputStream responseInputStream = operatorRestClient.sendRequest( postRequest, xmlRequest, operatorLogin, operatorPassword, operatorAuthHost );
         Map<String,String> statusMap = parseResponseStatuses(responseInputStream);
 
         int i = 0;
 
         for( Map.Entry<String, String> entry : statusMap.entrySet() ){
             SmsRequest request = smsRequestList.get( i );
+            request.setOperator( operator );
             request.setOperatorMessageId( entry.getKey() );
             request.setStatus( entry.getValue() );
             i++;
