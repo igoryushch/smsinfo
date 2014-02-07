@@ -39,6 +39,16 @@ public class SmsInfoServiceImpl implements SmsInfoService{
     }
 
     @Override
+    public List<SmsRequest> readRequestsForSending() {
+        return smsServiceDao.getMessagesToSend();
+    }
+
+    @Override
+    public void updateRequests( List<SmsRequest> requestList ) {
+        smsServiceDao.mergeMessages( requestList );
+    }
+
+    @Override
     public String getDeliveryStatusData( String systemName ) {
         return smsServiceUtils.buildDeliveryStatusResponse(readRequestsForSystem( systemName ));
     }

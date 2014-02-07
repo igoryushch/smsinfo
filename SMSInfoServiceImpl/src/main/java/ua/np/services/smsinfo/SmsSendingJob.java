@@ -24,10 +24,8 @@ import java.util.Map;
 
 public class SmsSendingJob implements Job {
 
-    private SmsServiceDao smsServiceDao;
-    private OperatorDao operatorDao;
-    private List<Operator> operators;
-    private Operator defaultOperator;
+    private SmsInfoService smsInfoService;
+    private OperatorService operatorService;
     private SmsServiceUtils smsServiceUtils;
     @Autowired
     private ApplicationContext applicationContext;
@@ -35,8 +33,10 @@ public class SmsSendingJob implements Job {
 
     public void doSend(){
 
+        System.out.println("Starting sending job!");
+
         // get messages to send
-        List<SmsRequest> requestList = smsServiceDao.getMessagesToSend();
+        List<SmsRequest> requestList = smsInfoService.readRequestsForSending();
 
         if( requestList.size() > 0 ){
             // divide into separate operators
@@ -50,12 +50,13 @@ public class SmsSendingJob implements Job {
                 }
             }
         }
+        System.out.println("Ending sending job!");
     }
 
     private void invokeSendingStrategy( Operator operator, List<SmsRequest> value ) {
         SmsSendingStrategy sendingStrategy = getSendingStrategy(operator);
         sendingStrategy.send( value, operator );
-        smsServiceDao.mergeMessages( value );
+        smsInfoService.updateRequests( value );
     }
 
     private SmsSendingStrategy getSendingStrategy( Operator operator ) {
@@ -65,7 +66,7 @@ public class SmsSendingJob implements Job {
     private Map<Operator, List<SmsRequest>> generateSendingMap( List<SmsRequest> requestList ) {
         Map<Operator, List<SmsRequest>> result = new HashMap<>(  );
         for( SmsRequest request : requestList ) {
-            Operator operator = resolveOperator( smsServiceUtils.getPhoneCodeFromNumber( request.getPhoneNumber() ) );
+            Operator operator = operatorService.resolveOperator( smsServiceUtils.getPhoneCodeFromNumber( request.getPhoneNumber() ) );
             if( !result.containsKey( operator ) ) {
                 result.put( operator, new ArrayList<SmsRequest>(  ) );
             }
@@ -75,39 +76,8 @@ public class SmsSendingJob implements Job {
         return result;
     }
 
-    private Operator resolveOperator( String phoneCode ) {
-        if( this.operators == null )
-            this.operators = operatorDao.findAll();
-
-        if( this.defaultOperator == null )
-            this.defaultOperator = getDefaultOperator();
-
-
-        for( Operator operator : operators ) {
-            for(String code : operator.getPhoneCodeMaping()){
-                if( code.equals( phoneCode ) )
-                    return operator;
-            }
-        }
-        return defaultOperator;
-    }
-
-    private Operator getDefaultOperator(){
-        for( Operator operator : operators ) {
-            for(String code : operator.getPhoneCodeMaping()){
-                if( "000".equals( code ) )
-                    return operator;
-            }
-        }
-        return null;
-    }
-
-    public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
-        this.smsServiceDao = smsServiceDao;
-    }
-
-    public void setOperatorDao( OperatorDao operatorDao ) {
-        this.operatorDao = operatorDao;
+    public void setSmsInfoService( SmsInfoService smsInfoService ) {
+        this.smsInfoService = smsInfoService;
     }
 
     public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
@@ -116,6 +86,10 @@ public class SmsSendingJob implements Job {
 
     public void setMaxSmsCountPerReqest( int maxSmsCountPerReqest ) {
         this.maxSmsCountPerReqest = maxSmsCountPerReqest;
+    }
+
+    public void setOperatorService( OperatorService operatorService ) {
+        this.operatorService = operatorService;
     }
 
     @Override

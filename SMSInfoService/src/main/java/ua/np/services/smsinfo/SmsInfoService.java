@@ -26,10 +26,13 @@ public interface SmsInfoService {
     @WebMethod
     public String getDeliveryStatusData ( @WebParam(name = "systemName") String systemName );
 
-//    @WebMethod
     public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator );
 
     public List<SmsRequest> readRequestsForSystem( String systemName );
 
     public void saveRequests( List<SmsRequest> smsRequests );
+
+    public List<SmsRequest> readRequestsForSending();
+
+    public void updateRequests(List<SmsRequest> requestList);
 }

@@ -27,7 +27,7 @@
             <!--<value>${jdbc.password}</value>-->
         <!--</property>-->
     <!--</bean>-->
-    <context:property-placeholder location="classpath:META-INF/dev.smsinfoservice.properties,META-INF/dev.operatorsGateway.properties,META-INF/dev.proxySettings.properties,jdbc.properties"/>
+    <context:property-placeholder location="test.smsinfoservice.properties,META-INF/dev.operatorsGateway.properties,META-INF/dev.proxySettings.properties"/>
     <!--<context:property-placeholder location="jdbc.properties"/>-->
 
 </beans>

@@ -1,10 +1,12 @@
 package ua.np.services.smsinfo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import javax.annotation.Resource;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -18,14 +20,19 @@ import org.testng.annotations.Test;
  */
 
 @ContextConfiguration
-public class SmsInfoServiceClientIT extends AbstractTestNGSpringContextTests {
+public class SmsInfoServiceClientIT extends AbstractTestNGSpringContextTests{
 
-    @Autowired
+    @Resource
+    @Qualifier(value = "smsInfoClient")
     private SmsInfoService smsInfoClient;
 
-    @Test
+    @Test(enabled = true)
     public void testWSInteraction(){
-
+        Assert.assertNotNull( smsInfoClient );
+        String response = smsInfoClient.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(), "Awis" );
+        Assert.assertNotNull( response );
+        System.out.println(response);
     }
+
 
 }

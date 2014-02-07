@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
-
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
  * http://novaposhta.ua/
@@ -30,8 +28,6 @@ public class SmsServiceUtilsTest {
     @BeforeMethod
     public void setUp() {
         smsServiceUtils = new SmsServiceUtils();
-        mockedOperatorDao = mock( OperatorDao.class );
-        smsServiceUtils.setOperatorDao( mockedOperatorDao );
     }
 
     @Test

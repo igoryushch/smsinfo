@@ -2,6 +2,7 @@ package ua.np.services.smsinfo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -38,6 +39,7 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
         for( SmsRequest smsRequest : requests ){
             entityManager.persist( smsRequest );
         }
+//        entityManager.flush();
         return requests;
     }
 
@@ -48,6 +50,7 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     }
 
     @Override
+    @Transactional
     public List<SmsRequest> getMessagesToSend() {
         return entityManager.createNamedQuery( "findPendingRequests", SmsRequest.class )
                 .setParameter( "statusPending", "Pending" )

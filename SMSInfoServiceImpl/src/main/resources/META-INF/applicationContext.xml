@@ -4,11 +4,9 @@
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
-                           http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.0.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
@@ -19,17 +17,18 @@
         <property name="maxSendCount" value="100"/>
     </bean>
     <bean id="operatorDao" class="ua.np.services.smsinfo.OperatorDaoImpl"/>
-    <bean id="smsServiceUtils" class="ua.np.services.smsinfo.SmsServiceUtils">
-        <property name="operatorDao" ref="operatorDao"/>
-    </bean>
+    <bean id="smsServiceUtils" class="ua.np.services.smsinfo.SmsServiceUtils"/>
     <bean id="smsInfoService" class="ua.np.services.smsinfo.SmsInfoServiceImpl">
         <property name="smsServiceDao" ref="smsServiceDao"/>
         <property name="smsServiceUtils" ref="smsServiceUtils" />
     </bean>
+    <bean id="operatorService" class="ua.np.services.smsinfo.OperatorServiceImpl">
+        <property name="operatorDao" ref="operatorDao"/>
+    </bean>
 
     <bean id="smsSendingJob" class="ua.np.services.smsinfo.SmsSendingJob">
-        <property name="operatorDao" ref="operatorDao"/>
-        <property name="smsServiceDao" ref="smsServiceDao"/>
+        <property name="smsInfoService" ref="smsInfoService"/>
+        <property name="operatorService" ref="operatorService"/>
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
         <property name="maxSmsCountPerReqest" value="50"/>
     </bean>
@@ -67,7 +66,7 @@
         <property name="operatorRestClient" ref="operatorRsClient"/>
     </bean>
 
-    <tx:annotation-driven/>
+    <!--<tx:annotation-driven/>-->
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
@@ -93,51 +92,21 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <!--<context:component-scan base-package="ua.np.services.smsinfo"/>-->
+    <context:component-scan base-package="ua.np.services.smsinfo"/>
 
     <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* ua.np.services.smsinfo.SmsInfoServiceImpl.*(..))"/>
-        <aop:advisor pointcut-ref="serviceOperation" advice-ref="txAdvise"/>
+        <aop:pointcut id="smsServiceOperation" expression="bean(smsInfoService) &amp; execution(* ua.np.services.smsinfo.SmsInfoService.*(..))"/>
+        <aop:pointcut id="operatorServiceOperation" expression="bean(operatorService) &amp; execution(* ua.np.services.smsinfo.OperatorService.*(..))"/>
+        <aop:advisor pointcut-ref="smsServiceOperation" advice-ref="txAdvise"/>
+        <aop:advisor pointcut-ref="operatorServiceOperation" advice-ref="txAdvise"/>
     </aop:config>
 
     <tx:advice id="txAdvise" transaction-manager="transactionManager">
         <tx:attributes>
-            <tx:method name="update*" propagation="REQUIRED"/>
-            <tx:method name="save*" propagation="REQUIRED"/>
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name="save*" propagation="REQUIRED" rollback-for="Exception"/>
             <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
         </tx:attributes>
     </tx:advice>
-
-    <!--<tx:advice id="smsServiceDaoTxAdvice">-->
-        <!--<tx:attributes>-->
-            <!--<tx:method name="*" propagation="MANDATORY"/>-->
-        <!--</tx:attributes>-->
-    <!--</tx:advice>-->
-
-    <!--<tx:advice id="operatorDaoTxAdvice">-->
-        <!--<tx:attributes>-->
-            <!--<tx:method name="*" propagation="MANDATORY"/>-->
-        <!--</tx:attributes>-->
-    <!--</tx:advice>-->
-
-    <!--&lt;!&ndash; the transactional advice (what 'happens'; see the <aop:advisor/> bean below) &ndash;&gt;-->
-    <!--<tx:advice id="smsInfoServiceTxAdvice">-->
-        <!--&lt;!&ndash; the transactional semantics... &ndash;&gt;-->
-        <!--<tx:attributes>-->
-            <!--&lt;!&ndash; all methods starting with 'read' are read-only &ndash;&gt;-->
-            <!--<tx:method name="read*" read-only="true"/>-->
-            <!--&lt;!&ndash; other methods use the default transaction settings (see below) &ndash;&gt;-->
-            <!--<tx:method name="persist*"/>-->
-            <!--<tx:method name="update*"/>-->
-        <!--</tx:attributes>-->
-    <!--</tx:advice>-->
-
-    <!--&lt;!&ndash; ensure that the above transactional advice runs for any execution-->
-      <!--of an operation defined by the service interface &ndash;&gt;-->
-    <!--<aop:config>-->
-        <!--<aop:pointcut id="smsInfoServiceOperations" expression="bean(smsInfoService) &amp; execution(* ua.np.services.smsinfo.SmsInfoService.*(..))"/>-->
-        <!--<aop:advisor advice-ref="smsInfoServiceTxAdvice" pointcut-ref="smsInfoServiceOperations"/>-->
-        <!--<aop:advisor advice-ref="operatorDaoTxAdvice" pointcut-ref="smsInfoServiceOperations"/>-->
-    <!--</aop:config>-->
 
 </beans>

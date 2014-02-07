@@ -21,12 +21,6 @@ import java.util.*;
 
 public class SmsServiceUtils {
 
-    private OperatorDao operatorDao;
-
-    public void setOperatorDao( OperatorDao operatorDao ) {
-        this.operatorDao = operatorDao;
-    }
-
     public List<SmsRequest> getRequestsFromXmlString(String xmlString, String systemName){
 
         List<Map<String,String>> messages = getMessageParams( xmlString );
