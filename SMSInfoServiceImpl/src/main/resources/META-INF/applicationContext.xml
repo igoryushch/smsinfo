@@ -11,72 +11,38 @@
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <!--<context:property-placeholder location="classpath:META-INF/dev.smsinfoservice.properties,META-INF/dev.operatorsGateway.properties,META-INF/dev.proxySettings.properties"/>-->
+    <context:property-placeholder location="/**/${ENV:dev}.smsinfoservice.properties"/>
+
+    <bean id="smsServiceUtils" class="ua.np.services.smsinfo.SmsServiceUtils"/>
 
     <bean id="smsServiceDao" class="ua.np.services.smsinfo.SmsServiceDaoImpl">
         <property name="maxSendCount" value="100"/>
     </bean>
-    <bean id="operatorDao" class="ua.np.services.smsinfo.OperatorDaoImpl"/>
-    <bean id="smsServiceUtils" class="ua.np.services.smsinfo.SmsServiceUtils"/>
-    <bean id="smsInfoService" class="ua.np.services.smsinfo.SmsInfoServiceImpl">
+    <bean id="smsService" class="ua.np.services.smsinfo.SmsServiceImpl">
         <property name="smsServiceDao" ref="smsServiceDao"/>
-        <property name="smsServiceUtils" ref="smsServiceUtils" />
     </bean>
+
+    <bean id="operatorDao" class="ua.np.services.smsinfo.OperatorDaoImpl"/>
     <bean id="operatorService" class="ua.np.services.smsinfo.OperatorServiceImpl">
         <property name="operatorDao" ref="operatorDao"/>
     </bean>
 
-    <bean id="smsSendingJob" class="ua.np.services.smsinfo.SmsSendingJob">
-        <property name="smsInfoService" ref="smsInfoService"/>
-        <property name="operatorService" ref="operatorService"/>
+    <bean id="smsInfoService" class="ua.np.services.smsinfo.SmsInfoServiceImpl">
+        <property name="smsService" ref="smsService"/>
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
-        <property name="maxSmsCountPerReqest" value="50"/>
     </bean>
 
-    <bean id="jaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
-        <constructor-arg>
-            <list>
-                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
-            </list>
-        </constructor-arg>
-    </bean>
-
-    <bean id="operatorRsClient" class="ua.np.services.smsinfo.OperatorRestClientImpl">
-        <property name="proxyHost" value="${proxy.host}"/>
-        <property name="proxyPort" value="${proxy.port}"/>
-        <property name="proxyUsername" value="${proxy.username}"/>
-        <property name="proxyPassword" value="${proxy.password}"/>
-    </bean>
-
-    <bean id="kyivstarSmsSendingStrategy" class="ua.np.services.smsinfo.KyivstarSmsSendingStrategy">
-        <property name="operatorHost" value="${kyivstar.host}"/>
-        <property name="operatorLogin" value="${kyivstar.hostUser}"/>
-        <property name="operatorPassword" value="${kyivstar.hostPassword}"/>
-        <property name="jaxbUnmarshaller">
-            <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
-        </property>
-        <property name="operatorRestClient" ref="operatorRsClient"/>
-    </bean>
-
-    <bean id="lifeSmsSendingStrategy" class="ua.np.services.smsinfo.LifeSmsSendingStrategy">
-        <property name="operatorHost" value="${life.host}"/>
-        <property name="operatorAuthHost" value="${life.authHost}"/>
-        <property name="operatorLogin" value="${life.hostUser}"/>
-        <property name="operatorPassword" value="${life.hostPassword}"/>
-        <property name="operatorRestClient" ref="operatorRsClient"/>
-    </bean>
-
-    <!--<tx:annotation-driven/>-->
+    <tx:annotation-driven/>
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" >
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="packagesToScan" value="ua.np.services.smsinfo"/>
         <property name="dataSource" ref="dataSource"/>
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="showSql" value="true" />
+                <property name="showSql" value="true"/>
             </bean>
         </property>
         <property name="jpaProperties">
@@ -92,21 +58,20 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
-    <context:component-scan base-package="ua.np.services.smsinfo"/>
+    <tx:advice id="txAdvise" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*" rollback-for="Exception"/>
+        </tx:attributes>
+    </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="smsServiceOperation" expression="bean(smsInfoService) &amp; execution(* ua.np.services.smsinfo.SmsInfoService.*(..))"/>
-        <aop:pointcut id="operatorServiceOperation" expression="bean(operatorService) &amp; execution(* ua.np.services.smsinfo.OperatorService.*(..))"/>
-        <aop:advisor pointcut-ref="smsServiceOperation" advice-ref="txAdvise"/>
+        <aop:pointcut id="smsServiceOperations" expression="bean(smsService) and execution(* ua.np.services.smsinfo.SmsService.*(..))"/>
+        <aop:pointcut id="operatorServiceOperation" expression="bean(operatorService) and execution(* ua.np.services.smsinfo.OperatorService.*(..))"/>
+
+        <aop:advisor pointcut-ref="smsServiceOperations" advice-ref="txAdvise"/>
         <aop:advisor pointcut-ref="operatorServiceOperation" advice-ref="txAdvise"/>
     </aop:config>
 
-    <tx:advice id="txAdvise" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="update*" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="save*" propagation="REQUIRED" rollback-for="Exception"/>
-            <tx:method name="*" propagation="SUPPORTS" read-only="true"/>
-        </tx:attributes>
-    </tx:advice>
 
 </beans>

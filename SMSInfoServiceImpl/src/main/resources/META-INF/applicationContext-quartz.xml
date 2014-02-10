@@ -1,10 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+">
 
-    <import resource="applicationContext.xml"/>
+    <bean id="smsSendingJob" class="ua.np.services.smsinfo.QuartzJob">
+        <property name="smsInfoServiceClient" ref="smsInfoService"/>
+        <property name="operatorService" ref="operatorService"/>
+        <property name="smsServiceUtils" ref="smsServiceUtils"/>
+        <property name="smsService" ref="smsService"/>
+        <property name="maxSmsCountPerReqest" value="50"/>
+        <property name="operator2StrategyMap" ref="operator2smsSendingStrategy"/>
+    </bean>
 
+    <bean id="jaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
+        <constructor-arg>
+            <list>
+                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="operatorRsClient" class="ua.np.services.smsinfo.OperatorRestClientImpl">
+        <property name="proxyHost" value="${proxy.host}"/>
+        <property name="proxyPort" value="${proxy.port}"/>
+        <property name="proxyUsername" value="${proxy.username}"/>
+        <property name="proxyPassword" value="${proxy.password}"/>
+    </bean>
+
+    <util:map id="operator2smsSendingStrategy"
+              key-type="java.lang.String"
+              value-type="ua.np.services.smsinfo.SmsSendingStrategy">
+        <entry key="Kyivstar">
+            <bean class="ua.np.services.smsinfo.KyivstarSmsSendingStrategy">
+                <property name="operatorHost" value="${kyivstar.host}"/>
+                <property name="operatorLogin" value="${kyivstar.hostUser}"/>
+                <property name="operatorPassword" value="${kyivstar.hostPassword}"/>
+                <property name="jaxbUnmarshaller">
+                    <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
+                </property>
+                <property name="operatorRestClient" ref="operatorRsClient"/>
+            </bean>
+        </entry>
+        <entry key="Life">
+            <bean class="ua.np.services.smsinfo.LifeSmsSendingStrategy">
+                <property name="operatorHost" value="${life.host}"/>
+                <property name="operatorAuthHost" value="${life.authHost}"/>
+                <property name="operatorLogin" value="${life.hostUser}"/>
+                <property name="operatorPassword" value="${life.hostPassword}"/>
+                <property name="operatorRestClient" ref="operatorRsClient"/>
+            </bean>
+        </entry>
+    </util:map>
 
     <!-- This proxy tells the session and transaction when to start and stop -->
     <bean id="myRunnableJobProxy" class="org.springframework.aop.framework.ProxyFactoryBean">
@@ -14,15 +65,16 @@
     </bean>
 
     <!-- New Clusterable Definition: note, the proxy is used now. -->
-    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+    <bean id="jobDetail" class="org.springframework.scheduling.quartz.JobDetailFactoryBean" lazy-init="false">
         <!--
                 <property name="applicationContextJobDataKey" value="applicationContext"/>
         -->
-        <property name="jobClass" value="ua.np.services.smsinfo.SmsSendingJob"/>
+        <property name="jobClass" value="ua.np.services.smsinfo.QuartzJob"/>
         <property name="durability" value="true"/>
         <property name="jobDataAsMap">
             <map>
-                <entry key="batchProcessorName" value="myRunnableJobProxy" />
+                <entry key="batchProcessorName" value="myRunnableJobProxy"/>
+                <entry key="maxSmsCountPerReqest" value="50"/>
             </map>
         </property>
     </bean>
@@ -37,9 +89,12 @@
     </bean>
 
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="jobDetails">
+
+        </property>
         <property name="triggers">
             <list>
-                <ref bean="simpleTrigger" />
+                <ref bean="simpleTrigger"/>
             </list>
         </property>
         <property name="quartzProperties">

@@ -29,17 +29,16 @@ public class SmsInfoServiceIT extends AbstractTransactionalTestNGSpringContextTe
     @PersistenceContext
     EntityManager entityManager;
 
-    @Test
+    //@Test
     public void testConfiguration() throws Exception {
-        Assert.assertNotNull( applicationContext.getBean( "smsInfoServiceWsServer" ) );
         Assert.assertNotNull( applicationContext.getBean( "transactionManager" ) );
         Assert.assertNotNull( smsInfoService );
         Assert.assertNotNull( entityManager );
     }
 
     @Test
-    public void testSendMessages(){
-        String response = smsInfoService.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(),"Awis" );
+    public void testSendMessages() {
+        String response = smsInfoService.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(), "Awis" );
 //        flushAndClear();
         Assert.assertNotNull( response );
         Assert.assertEquals( response, SmsInfoServiceITUtils.getExpectedResponse() );
@@ -47,26 +46,26 @@ public class SmsInfoServiceIT extends AbstractTransactionalTestNGSpringContextTe
         testOperatorInteraction();
     }
 
-    public void testGetDeliveryStatusData(){
-        String response = smsInfoService.getDeliveryStatusData( "Awis" );
+    public void testGetDeliveryStatusData() {
+        String response = smsInfoService.reportDeliveryData( "Awis" );
         Assert.assertEquals( response, SmsInfoServiceITUtils.getStatusDataResponseString() );
     }
 
-    public void testOperatorInteraction(){
-        SmsSendingJob sendingJob = applicationContext.getBean( "smsSendingJob",SmsSendingJob.class );
+    public void testOperatorInteraction() {
+        QuartzJob sendingJob = applicationContext.getBean( "smsSendingJob", QuartzJob.class );
         sendingJob.doSend();
     }
 
-    public void testUpdateStatuses(){
+    public void testUpdateStatuses() {
         updateOperatorDataInSms();
     }
 
-    public void updateOperatorDataInSms(){
+    public void updateOperatorDataInSms() {
 
     }
 
     void flushAndClear() {
-        if (entityManager != null) {
+        if( entityManager != null ) {
             entityManager.flush();
             entityManager.clear();
         }

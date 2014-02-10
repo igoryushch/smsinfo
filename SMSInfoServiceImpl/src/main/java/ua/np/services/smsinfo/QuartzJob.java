@@ -1,11 +1,5 @@
 package ua.np.services.smsinfo;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,53 +16,54 @@ import java.util.Map;
  * Date: 29.01.14
  */
 
-public class SmsSendingJob implements Job {
+public class QuartzJob implements Runnable {
 
-    private SmsInfoService smsInfoService;
-    private OperatorService operatorService;
     private SmsServiceUtils smsServiceUtils;
-    @Autowired
-    private ApplicationContext applicationContext;
+    private Map<String, SmsSendingStrategy> operator2StrategyMap;
+
+    private SmsService smsService;
+    private OperatorService operatorService;
+
+    private SmsInfoService smsInfoServiceClient;
+
     private int maxSmsCountPerReqest;
 
-    public void doSend(){
+    public void run() {
 
-        System.out.println("Starting sending job!");
+        System.out.println( "Starting sending job!" );
 
         // get messages to send
-        List<SmsRequest> requestList = smsInfoService.readRequestsForSending();
+        List<SmsRequest> requestList = smsService.getRequestsForSending();
 
-        if( requestList.size() > 0 ){
+        if( requestList.size() > 0 ) {
             // divide into separate operators
-            Map<Operator, List<SmsRequest>> sendingMap = generateSendingMap(requestList);
+            Map<Operator, List<SmsRequest>> sendingMap = generateSendingMap( requestList );
 
             // send using separate strategy
-            for( Map.Entry<Operator, List<SmsRequest>> entry : sendingMap.entrySet()){
+            for( Map.Entry<Operator, List<SmsRequest>> entry : sendingMap.entrySet() ) {
                 Operator operator = entry.getKey();
                 if( operator != null ) {
 //                    invokeSendingStrategy(operator, entry.getValue());
                 }
             }
         }
-        System.out.println("Ending sending job!");
+        System.out.println( "Ending sending job!" );
     }
 
     private void invokeSendingStrategy( Operator operator, List<SmsRequest> value ) {
-        SmsSendingStrategy sendingStrategy = getSendingStrategy(operator);
-        sendingStrategy.send( value, operator );
-        smsInfoService.updateRequests( value );
-    }
-
-    private SmsSendingStrategy getSendingStrategy( Operator operator ) {
-        return applicationContext.getBean( operator.getName().toLowerCase() + "SmsSendingStrategy", SmsSendingStrategy.class );
+        SmsSendingStrategy sendingStrategy = operator2StrategyMap.get( operator.getName() );
+        if (sendingStrategy != null) {
+            sendingStrategy.send( value, operator );
+            //smsInfoServiceClient.updateRequests( value );
+        }
     }
 
     private Map<Operator, List<SmsRequest>> generateSendingMap( List<SmsRequest> requestList ) {
-        Map<Operator, List<SmsRequest>> result = new HashMap<>(  );
+        Map<Operator, List<SmsRequest>> result = new HashMap<>();
         for( SmsRequest request : requestList ) {
             Operator operator = operatorService.resolveOperator( smsServiceUtils.getPhoneCodeFromNumber( request.getPhoneNumber() ) );
             if( !result.containsKey( operator ) ) {
-                result.put( operator, new ArrayList<SmsRequest>(  ) );
+                result.put( operator, new ArrayList<SmsRequest>() );
             }
             if( result.get( operator ).size() < maxSmsCountPerReqest )
                 result.get( operator ).add( request );
@@ -76,8 +71,8 @@ public class SmsSendingJob implements Job {
         return result;
     }
 
-    public void setSmsInfoService( SmsInfoService smsInfoService ) {
-        this.smsInfoService = smsInfoService;
+    public void setSmsInfoServiceClient( SmsInfoService smsInfoServiceClient ) {
+        this.smsInfoServiceClient = smsInfoServiceClient;
     }
 
     public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
@@ -92,8 +87,12 @@ public class SmsSendingJob implements Job {
         this.operatorService = operatorService;
     }
 
-    @Override
-    public void execute( JobExecutionContext jobExecutionContext ) throws JobExecutionException {
-        doSend();
+    public void setSmsService( SmsService smsService ) {
+        this.smsService = smsService;
     }
+
+    public void setOperator2StrategyMap( Map<String, SmsSendingStrategy> operator2StrategyMap ) {
+        this.operator2StrategyMap = operator2StrategyMap;
+    }
+
 }

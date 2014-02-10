@@ -1,7 +1,7 @@
 package ua.np.services.smsinfo;
 
+import javax.jws.WebService;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -14,13 +14,14 @@ import java.util.Map;
  * Date: 10.01.14
  */
 
-public class SmsInfoServiceImpl implements SmsInfoService{
+@WebService(endpointInterface = "ua.np.services.smsinfo.SmsInfoService", serviceName = "SmsInfoPort")
+public class SmsInfoServiceImpl implements SmsInfoService {
 
-    private SmsServiceDao smsServiceDao;
+    private SmsService smsService;
     private SmsServiceUtils smsServiceUtils;
 
-    public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
-        this.smsServiceDao = smsServiceDao;
+    public void setSmsService( SmsService smsService ) {
+        this.smsService = smsService;
     }
 
     public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
@@ -30,37 +31,25 @@ public class SmsInfoServiceImpl implements SmsInfoService{
     @Override
     public String sendMessages( String xml, String systemName ) {
         List<SmsRequest> smsRequests = smsServiceUtils.getRequestsFromXmlString( xml, systemName );
-        saveRequests( smsRequests );
+        smsService.saveRequests( smsRequests );
         return smsServiceUtils.buildAcceptedResponse( smsRequests );
     }
 
-    public void saveRequests( List<SmsRequest> smsRequests ) {
-        smsServiceDao.addRequests( smsRequests );
-    }
 
     @Override
-    public List<SmsRequest> readRequestsForSending() {
-        return smsServiceDao.getMessagesToSend();
+    public String reportDeliveryData( String systemName ) {
+        List<SmsRequest> requestsForSystem = smsService.getRequestsForSystem( systemName );
+        return smsServiceUtils.buildDeliveryStatusResponse( requestsForSystem );
     }
 
-    @Override
-    public void updateRequests( List<SmsRequest> requestList ) {
-        smsServiceDao.mergeMessages( requestList );
-    }
+/*    @Override
+        public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator ) {
+            if( operator == null ) {
+                smsService.updateStatuses( newMessageStatuses );
+            } else {
+                smsService.updateStatuses( newMessageStatuses, operator );
+            }
+        }
+*/
 
-    @Override
-    public String getDeliveryStatusData( String systemName ) {
-        return smsServiceUtils.buildDeliveryStatusResponse(readRequestsForSystem( systemName ));
-    }
-
-    @Override
-    public List<SmsRequest> readRequestsForSystem( String systemName ){
-        return smsServiceDao.getRequestsForSystem( systemName );
-    }
-
-    @Override
-    public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator ) {
-        if( operator == null ) smsServiceDao.updateStatuses( newMessageStatuses );
-        else smsServiceDao.updateStatuses( newMessageStatuses, operator );
-    }
 }

@@ -2,7 +2,6 @@ package ua.np.services.smsinfo;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -26,7 +25,7 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     private int maxSendCount;
 
     @PersistenceContext
-    public void setEntityManager(EntityManager entityManager) {
+    public void setEntityManager( EntityManager entityManager ) {
         this.entityManager = entityManager;
     }
 
@@ -35,22 +34,22 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     }
 
     @Override
-    public List <SmsRequest> addRequests( List<SmsRequest> requests ) {
-        for( SmsRequest smsRequest : requests ){
+    public List<SmsRequest> addRequests( List<SmsRequest> requests ) {
+        for( SmsRequest smsRequest : requests ) {
             entityManager.persist( smsRequest );
         }
-//        entityManager.flush();
         return requests;
     }
 
     @Override
     public List<SmsRequest> getRequestsForSystem( String systemName ) {
-        if( systemName == null ) return Collections.<SmsRequest>emptyList();
+        if( systemName == null ) {
+            return Collections.emptyList();
+        }
         return entityManager.createNamedQuery( "findBySystemName", SmsRequest.class ).setParameter( "systemName", systemName ).getResultList();
     }
 
     @Override
-    @Transactional
     public List<SmsRequest> getMessagesToSend() {
         return entityManager.createNamedQuery( "findPendingRequests", SmsRequest.class )
                 .setParameter( "statusPending", "Pending" )
@@ -61,7 +60,7 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     @Override
     public void updateStatuses( Map<String, String> statusMap ) {
         String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid";
-        for( Map.Entry<String, String> entry : statusMap.entrySet() ){
+        for( Map.Entry<String, String> entry : statusMap.entrySet() ) {
             entityManager.createQuery( queryString )
                     .setParameter( "newStatus", entry.getValue() )
                     .setParameter( "operatorMid", entry.getKey() )
@@ -72,8 +71,11 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
     @Override
     public void updateStatuses( Map<String, String> statusMap, Operator operator ) {
         String queryString = "UPDATE SmsRequest sr SET sr.status = :newStatus WHERE sr.operatorMessageId = :operatorMid";
-        if( operator != null ) queryString = queryString + " AND sr.operator = :operator";
-        for( Map.Entry<String, String> entry : statusMap.entrySet() ){
+        if( operator != null ) {
+            queryString = queryString + " AND sr.operator = :operator";
+        }
+
+        for( Map.Entry<String, String> entry : statusMap.entrySet() ) {
             entityManager.createQuery( queryString )
                     .setParameter( "newStatus", entry.getValue() )
                     .setParameter( "operatorMid", entry.getKey() )
@@ -84,8 +86,8 @@ public class SmsServiceDaoImpl implements SmsServiceDao {
 
     @Override
     public List<SmsRequest> mergeMessages( List<SmsRequest> requests ) {
-        for( SmsRequest smsRequest : requests ){
-            smsRequest.setUpdateDate( new GregorianCalendar(  ) );
+        for( SmsRequest smsRequest : requests ) {
+            smsRequest.setUpdateDate( new GregorianCalendar() );
             entityManager.merge( smsRequest );
         }
         return requests;
