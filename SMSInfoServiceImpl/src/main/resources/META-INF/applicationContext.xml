@@ -20,6 +20,7 @@
     </bean>
     <bean id="smsService" class="ua.np.services.smsinfo.SmsServiceImpl">
         <property name="smsServiceDao" ref="smsServiceDao"/>
+        <property name="operatorDao" ref="operatorDao"/>
     </bean>
 
     <bean id="operatorDao" class="ua.np.services.smsinfo.OperatorDaoImpl"/>

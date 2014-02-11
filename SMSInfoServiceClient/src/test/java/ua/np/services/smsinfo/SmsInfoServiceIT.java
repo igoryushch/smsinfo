@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.testng.AbstractTransactionalTestNGSpringContextTests;
 import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -36,7 +35,7 @@ public class SmsInfoServiceIT extends AbstractTransactionalTestNGSpringContextTe
         Assert.assertNotNull( entityManager );
     }
 
-    @Test
+    //@Test
     public void testSendMessages() {
         String response = smsInfoService.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(), "Awis" );
 //        flushAndClear();
@@ -52,8 +51,8 @@ public class SmsInfoServiceIT extends AbstractTransactionalTestNGSpringContextTe
     }
 
     public void testOperatorInteraction() {
-        QuartzJob sendingJob = applicationContext.getBean( "smsSendingJob", QuartzJob.class );
-        sendingJob.doSend();
+        SmsSendingRunnableJob sendingJob = applicationContext.getBean( "smsSendingJob", SmsSendingRunnableJob.class );
+        sendingJob.run();
     }
 
     public void testUpdateStatuses() {

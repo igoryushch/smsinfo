@@ -24,6 +24,6 @@ public interface SmsInfoService {
     @WebMethod(operationName = "getDeliveryStatusData")
     public String reportDeliveryData( @WebParam(name = "systemName") String systemName );
 
-//    @WebMethod
-//    public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator );
+    @WebMethod
+    public void updateStatuses( UpdateRequest updateRequest, String operatorName );
 }

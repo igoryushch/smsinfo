@@ -1,7 +1,9 @@
 package ua.np.services.smsinfo;
 
 import javax.jws.WebService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -42,14 +44,21 @@ public class SmsInfoServiceImpl implements SmsInfoService {
         return smsServiceUtils.buildDeliveryStatusResponse( requestsForSystem );
     }
 
-/*    @Override
-        public void updateStatuses( Map<String, String> newMessageStatuses, Operator operator ) {
-            if( operator == null ) {
-                smsService.updateStatuses( newMessageStatuses );
+    @Override
+    public void updateStatuses( UpdateRequest updateRequest, String operatorName ) {
+
+        Map<String, String> updateParams = new HashMap<>(  );
+
+        for(UpdateItem updateItem : updateRequest.getItemList()){
+            updateParams.put( updateItem.getMessageId(), updateItem.getMessageStatus() );
+        }
+
+        if( updateParams.size() > 0 ){
+            if( operatorName == null ){
+                smsService.updateRequests( updateParams );
             } else {
-                smsService.updateStatuses( newMessageStatuses, operator );
+                smsService.updateRequests( updateParams, operatorName );
             }
         }
-*/
-
+    }
 }

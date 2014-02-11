@@ -1,6 +1,7 @@
 package ua.np.services.smsinfo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -15,9 +16,14 @@ import java.util.List;
 public class SmsServiceImpl implements SmsService {
 
     private SmsServiceDao smsServiceDao;
+    private OperatorDao operatorDao;
 
     public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
         this.smsServiceDao = smsServiceDao;
+    }
+
+    public void setOperatorDao( OperatorDao operatorDao ) {
+        this.operatorDao = operatorDao;
     }
 
     @Override
@@ -31,8 +37,18 @@ public class SmsServiceImpl implements SmsService {
     }
 
     @Override
-    public void updateRequests( List<SmsRequest> requestList ) {
-        smsServiceDao.mergeMessages( requestList );
+    public void updateRequests( Map<String, String> requestList, String operatorName ) {
+        Operator operator = operatorDao.getOperatorByName( operatorName );
+        if( operator != null ){
+            smsServiceDao.updateStatuses( requestList, operator );
+        } else {
+            updateRequests( requestList );
+        }
+    }
+
+    @Override
+    public void updateRequests( Map<String, String> requestList ) {
+        smsServiceDao.updateStatuses( requestList );
     }
 
     @Override

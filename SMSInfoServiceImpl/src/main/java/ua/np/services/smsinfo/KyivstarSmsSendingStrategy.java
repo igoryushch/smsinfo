@@ -5,6 +5,7 @@ import org.apache.http.client.methods.HttpPost;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,7 +19,7 @@ import java.util.List;
  * Date: 16.01.14
  */
 
-public class KyivstarSmsSendingStrategy implements SmsSendingStrategy {
+public class KyivstarSmsSendingStrategy implements SmsSendingStrategy, Serializable {
 
     private String operatorHost;
     private String operatorLogin;

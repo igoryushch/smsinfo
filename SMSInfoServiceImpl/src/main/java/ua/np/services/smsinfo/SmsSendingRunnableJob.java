@@ -16,7 +16,7 @@ import java.util.Map;
  * Date: 29.01.14
  */
 
-public class QuartzJob implements Runnable {
+public class SmsSendingRunnableJob implements Runnable {
 
     private SmsServiceUtils smsServiceUtils;
     private Map<String, SmsSendingStrategy> operator2StrategyMap;
@@ -30,8 +30,6 @@ public class QuartzJob implements Runnable {
 
     public void run() {
 
-        System.out.println( "Starting sending job!" );
-
         // get messages to send
         List<SmsRequest> requestList = smsService.getRequestsForSending();
 
@@ -43,18 +41,17 @@ public class QuartzJob implements Runnable {
             for( Map.Entry<Operator, List<SmsRequest>> entry : sendingMap.entrySet() ) {
                 Operator operator = entry.getKey();
                 if( operator != null ) {
-//                    invokeSendingStrategy(operator, entry.getValue());
+                    invokeSendingStrategy(operator, entry.getValue());
                 }
             }
         }
-        System.out.println( "Ending sending job!" );
     }
 
     private void invokeSendingStrategy( Operator operator, List<SmsRequest> value ) {
         SmsSendingStrategy sendingStrategy = operator2StrategyMap.get( operator.getName() );
         if (sendingStrategy != null) {
             sendingStrategy.send( value, operator );
-            //smsInfoServiceClient.updateRequests( value );
+            smsInfoServiceClient.updateStatuses( buildUpdateRequest( value ), operator.getName() );
         }
     }
 
@@ -69,6 +66,14 @@ public class QuartzJob implements Runnable {
                 result.get( operator ).add( request );
         }
         return result;
+    }
+
+    private UpdateRequest buildUpdateRequest(List<SmsRequest> requestList){
+        UpdateRequest updateRequest = new UpdateRequest(  );
+        for( SmsRequest smsRequest : requestList ){
+            updateRequest.addUpdateItem( new UpdateItem(smsRequest.getOperatorMessageId(), smsRequest.getStatus()) );
+        }
+        return updateRequest;
     }
 
     public void setSmsInfoServiceClient( SmsInfoService smsInfoServiceClient ) {

@@ -20,6 +20,7 @@
        <module>SMSInfoService</module>
        <module>SMSInfoServiceImpl</module>
        <module>SMSInfoServiceClient</module>
+       <module>OperatorServiceStubs</module>
     </modules>
 
 </project>
