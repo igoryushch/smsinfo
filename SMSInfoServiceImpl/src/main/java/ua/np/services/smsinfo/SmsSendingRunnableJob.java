@@ -51,7 +51,8 @@ public class SmsSendingRunnableJob implements Runnable {
         SmsSendingStrategy sendingStrategy = operator2StrategyMap.get( operator.getName() );
         if (sendingStrategy != null) {
             sendingStrategy.send( value, operator );
-            smsInfoServiceClient.updateStatuses( buildUpdateRequest( value ), operator.getName() );
+            smsInfoServiceClient.updateStatuses( new SmsRequestListWrapper( value ) );
+//            smsInfoServiceClient.updateStatuses( buildUpdateRequest( value ), operator.getName() );
         }
     }
 

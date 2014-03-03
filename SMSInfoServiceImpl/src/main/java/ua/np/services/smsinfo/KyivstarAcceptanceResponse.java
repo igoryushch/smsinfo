@@ -1,7 +1,6 @@
 package ua.np.services.smsinfo;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,10 +15,13 @@ import java.util.List;
  * Date: 21.01.14
  */
 
-@XmlRootElement(name = "report",namespace="http://goldetele.com/cpa")
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "reportType", namespace = "http://goldetele.com/cpa", propOrder = {
+        "status"
+})
 public class KyivstarAcceptanceResponse {
 
-    @XmlElement
+    @XmlElement(namespace = "http://goldetele.com/cpa")
     private List<KyivstarAcceptanceStatus> status;
 
     public List<KyivstarAcceptanceStatus> getStatus() {

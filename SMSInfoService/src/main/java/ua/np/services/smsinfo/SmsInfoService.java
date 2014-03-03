@@ -25,5 +25,5 @@ public interface SmsInfoService {
     public String reportDeliveryData( @WebParam(name = "systemName") String systemName );
 
     @WebMethod
-    public void updateStatuses( UpdateRequest updateRequest, String operatorName );
+    public void updateStatuses( SmsRequestListWrapper requestList );
 }

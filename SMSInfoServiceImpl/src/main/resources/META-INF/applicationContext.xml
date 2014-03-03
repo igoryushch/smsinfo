@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans default-lazy-init="true"
        xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
@@ -9,7 +10,8 @@
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+                           http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
     <context:property-placeholder location="/**/${ENV:dev}.smsinfoservice.properties"/>
 
@@ -20,7 +22,6 @@
     </bean>
     <bean id="smsService" class="ua.np.services.smsinfo.SmsServiceImpl">
         <property name="smsServiceDao" ref="smsServiceDao"/>
-        <property name="operatorDao" ref="operatorDao"/>
     </bean>
 
     <bean id="operatorDao" class="ua.np.services.smsinfo.OperatorDaoImpl"/>
@@ -73,6 +74,5 @@
         <aop:advisor pointcut-ref="smsServiceOperations" advice-ref="txAdvise"/>
         <aop:advisor pointcut-ref="operatorServiceOperation" advice-ref="txAdvise"/>
     </aop:config>
-
 
 </beans>

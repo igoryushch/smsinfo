@@ -13,6 +13,7 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <constructor-arg>
             <list>
                 <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+                <value>ua.np.services.smsinfo.ObjectFactory</value>
             </list>
         </constructor-arg>
     </bean>
@@ -23,6 +24,8 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
         <property name="proxyUsername" value="${proxy.username}"/>
         <property name="proxyPassword" value="${proxy.password}"/>
     </bean>
+
+    <bean id="operatorRsNoProxyClient" class="ua.np.services.smsinfo.OperatorRestClientNoProxyImpl"/>
 
     <util:map id="operator2smsSendingStrategy"
               key-type="java.lang.String"
@@ -35,22 +38,30 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                 <property name="jaxbUnmarshaller">
                     <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
                 </property>
-                <property name="operatorRestClient" ref="operatorRsClient"/>
+                <!--<property name="operatorRestClient" ref="operatorRsClient"/>-->
+                <property name="operatorRestClient" ref="operatorRsNoProxyClient"/>
             </bean>
         </entry>
         <entry key="Life">
-            <bean class="ua.np.services.smsinfo.LifeSmsSendingStrategy">
-                <property name="operatorHost" value="${life.host}"/>
-                <property name="operatorAuthHost" value="${life.authHost}"/>
-                <property name="operatorLogin" value="${life.hostUser}"/>
-                <property name="operatorPassword" value="${life.hostPassword}"/>
-                <property name="operatorRestClient" ref="operatorRsClient"/>
+            <!--<bean class="ua.np.services.smsinfo.LifeSmsSendingStrategy">-->
+                <!--<property name="operatorHost" value="${life.host}"/>-->
+                <!--<property name="operatorAuthHost" value="${life.authHost}"/>-->
+                <!--<property name="operatorLogin" value="${life.hostUser}"/>-->
+                <!--<property name="operatorPassword" value="${life.hostPassword}"/>-->
+                <!--<property name="operatorRestClient" ref="operatorRsClient"/>-->
+            <!--</bean>-->
+            <bean class="ua.np.services.smsinfo.NewLifeSmsSendingStrategy">
+                <property name="operatorHost" value="${life.newHost}"/>
+                <property name="operatorAuthHost" value="${life.newAuthHost}"/>
+                <property name="operatorLogin" value="${life.newHostUser}"/>
+                <property name="operatorPassword" value="${life.newHostPassword}"/>
+                <property name="operatorRestClient" ref="operatorRsNoProxyClient"/>
             </bean>
         </entry>
     </util:map>
 
     <bean id="smsSendingJob" class="ua.np.services.smsinfo.SmsSendingRunnableJob">
-        <property name="smsInfoServiceClient" ref="smsInfoService"/>
+        <property name="smsInfoServiceClient" ref="smsInfoClient"/>
         <property name="operatorService" ref="operatorService"/>
         <property name="smsServiceUtils" ref="smsServiceUtils"/>
         <property name="smsService" ref="smsService"/>
@@ -79,10 +90,10 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
                             </property>
                         </bean>
                     </property>
-                    <!-- 10 seconds -->
+                    <!-- 5 seconds -->
                     <property name="startDelay" value="5000"/>
-                    <!-- repeat every 50 seconds -->
-                    <property name="cronExpression" value="*/15 * * * * ?"/>
+                    <!-- repeat every 30 seconds -->
+                    <property name="cronExpression" value="*/30 * * * * ?"/>
                 </bean>
             </list>
         </property>

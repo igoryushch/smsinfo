@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="smsRequestListWrapper">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="smsRequest" maxOccurs="unbounded">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="incomingId" type="xs:byte"/>
+							<xs:element name="systemName" type="xs:string"/>
+							<xs:element name="phoneNumber" type="xs:int"/>
+							<xs:element name="messageText" type="xs:string"/>
+							<xs:element name="creationDate" type="xs:dateTime"/>
+							<xs:element name="updateDate" type="xs:dateTime"/>
+							<xs:element name="status" type="xs:string"/>
+							<xs:element name="operator">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="name" type="xs:string"/>
+										<xs:element name="phoneCodeMaping" maxOccurs="unbounded" type="xs:byte"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="operatorMessageId" type="xs:int"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,7 +1,6 @@
 package ua.np.services.smsinfo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -21,7 +20,5 @@ public interface SmsService {
 
     void saveRequests( List<SmsRequest> smsRequests );
 
-    void updateRequests( Map<String, String> requestList, String operatorName );
-
-    void updateRequests( Map<String, String> requestList );
+    void updateRequests( List<SmsRequest> smsRequests );
 }

@@ -27,6 +27,15 @@ public class KyivstarAcceptanceStatus {
     @XmlValue
     private String value;
 
+    public KyivstarAcceptanceStatus() {
+    }
+
+    public KyivstarAcceptanceStatus( String mid, String clid, String value ) {
+        this.mid = mid;
+        this.clid = clid;
+        this.value = value;
+    }
+
     public String getMid() {
         return mid;
     }

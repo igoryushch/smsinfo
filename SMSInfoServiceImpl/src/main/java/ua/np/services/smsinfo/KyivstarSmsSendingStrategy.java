@@ -2,6 +2,7 @@ package ua.np.services.smsinfo;
 
 import org.apache.http.client.methods.HttpPost;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
@@ -34,6 +35,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy, Serializa
         HttpPost postRequest = new HttpPost( operatorHost );
         InputStream responseInputStream = operatorRestClient.sendRequest( postRequest, xmlRequest );
         // unmarshall response
+
         KyivstarAcceptanceResponse resultResponse = parseResponse( responseInputStream );
         // update operator message id & statuses
         List<KyivstarAcceptanceStatus> statusList = resultResponse.getStatus();
@@ -52,7 +54,8 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy, Serializa
     private KyivstarAcceptanceResponse parseResponse( InputStream responseInputStream ) {
         KyivstarAcceptanceResponse resultResponse = null;
         try {
-            resultResponse = (KyivstarAcceptanceResponse) jaxbUnmarshaller.unmarshal( responseInputStream );
+            JAXBElement<KyivstarAcceptanceResponse> jeResponse = (JAXBElement<KyivstarAcceptanceResponse>)jaxbUnmarshaller.unmarshal( responseInputStream );
+            resultResponse = jeResponse.getValue();
             return resultResponse;
         } catch( JAXBException e ) {
             e.printStackTrace();
@@ -64,7 +67,7 @@ public class KyivstarSmsSendingStrategy implements SmsSendingStrategy, Serializa
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
+        sb.append( "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" );
         sb.append( "<root xmlns=\"http://goldentele.com/cpa\">" );
         sb.append( "<login>" + operatorLogin + "</login><paswd>" + operatorPassword + "</paswd>" );
         sb.append( "<service>bulk-request</service>" );

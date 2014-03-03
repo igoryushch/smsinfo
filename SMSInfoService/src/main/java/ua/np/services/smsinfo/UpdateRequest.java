@@ -3,6 +3,7 @@ package ua.np.services.smsinfo;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,14 +27,23 @@ public class UpdateRequest {
     }
 
     public UpdateRequest( List<UpdateItem> itemList ) {
+        if( this.itemList == null ){
+            this.itemList = new ArrayList<>(  );
+        }
         this.itemList.addAll( itemList );
     }
 
     public void addUpdateItem(UpdateItem updateItem){
+        if( this.itemList == null ){
+            this.itemList = new ArrayList<>(  );
+        }
         this.itemList.add( updateItem );
     }
 
     public List<UpdateItem> getItemList() {
+        if( this.itemList == null ){
+            this.itemList = new ArrayList<>(  );
+        }
         return itemList;
     }
 

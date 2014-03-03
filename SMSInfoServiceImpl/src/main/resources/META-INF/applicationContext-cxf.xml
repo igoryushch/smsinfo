@@ -16,4 +16,7 @@ http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
                   address="${smsInfoServiceWsServer.address}">
     </jaxws:endpoint>
 
+    <jaxws:client id="smsInfoClient" serviceClass="ua.np.services.smsinfo.SmsInfoService"
+                  address="${smsInfoServiceWsClient.address}"/>
+
 </beans>

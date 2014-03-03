@@ -19,7 +19,7 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 public class ProxySettingsHolder {
 
     private String proxyHost;
-    private String proxyPort;
+    private int proxyPort;
     private String proxyUsername;
     private String proxyPassword;
     
@@ -39,7 +39,7 @@ public class ProxySettingsHolder {
     }
 
     public int getProxyPort() {
-        return Integer.valueOf( proxyPort );
+        return proxyPort;
     }
 
     public String getProxyUsername() {
@@ -54,7 +54,7 @@ public class ProxySettingsHolder {
         this.proxyHost = proxyHost;
     }
 
-    public void setProxyPort( String proxyPort ) {
+    public void setProxyPort( int proxyPort ) {
         this.proxyPort = proxyPort;
     }
 

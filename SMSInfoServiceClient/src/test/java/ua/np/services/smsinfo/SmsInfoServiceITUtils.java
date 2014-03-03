@@ -47,7 +47,7 @@ public class SmsInfoServiceITUtils {
                 "</Value>" +
                 "<Value name=\"phone\">" +
                 "<Type>String</Type>" +
-                "<Data>0962276147</Data>" +
+                "<Data>0955942730</Data>" +
                 "</Value>" +
                 "<Value name=\"text\">" +
                 "<Type>String</Type>" +

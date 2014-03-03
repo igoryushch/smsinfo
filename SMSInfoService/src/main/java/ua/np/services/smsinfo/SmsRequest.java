@@ -1,6 +1,9 @@
 package ua.np.services.smsinfo;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Calendar;
 
 /**
@@ -14,6 +17,8 @@ import java.util.Calendar;
  * Date: 09.01.14
  */
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @NamedQueries(
         {

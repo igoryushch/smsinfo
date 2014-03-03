@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:property-placeholder location="proxySettings.properties"/>
+    <context:property-placeholder location="proxySettings.properties,operatorGateway.properties"/>
     <bean id="proxySettingsHolder" class="ua.np.services.smsinfo.ProxySettingsHolder" >
         <property name="proxyHost" value="${proxy.host}"/>
         <property name="proxyPort" value="${proxy.port}"/>

@@ -75,8 +75,9 @@ public class LifeNewApiIntegrationTest extends AbstractTestNGSpringContextTests 
         String request = "<message>" +
                 "<service id=\"individual\" validity=\"+5 hour\" source = \"NovaPoshta\" uniq_key=\"" + String.valueOf( uniqueKey ) + "\"/>" +
                 "<to>380962276147</to>" +
-                "<body content-type=\"text/plain\">First Test Message</body>" +
                 "<to>380962276147</to>" +
+//                "<to>380674557547</to>" +
+                "<body content-type=\"text/plain\">First Test Message</body>" +
                 "<body content-type=\"text/plain\">Second Test Message</body>" +
                 "</message>";
 

@@ -16,6 +16,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>ua.np.services</groupId>
+            <artifactId>SMSInfoServiceImpl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- START: Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -71,6 +77,12 @@
             <type>pom</type>
         </dependency>
 
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
          <!-- START: TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
@@ -93,6 +105,15 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.26</version>
+                <configuration>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <connectors>
+                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                            <port>8089</port>
+                            <maxIdleTime>60000</maxIdleTime>
+                        </connector>
+                    </connectors>
+                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -27,13 +27,13 @@ public class OperatorRestClientStub implements OperatorRestClient {
     }
 
     private InputStream getKyivstarTestInputStream(){
-        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<report xmlns=\"http://goldetele.com/cpa\">\n" +
-                "    <status mid=\"84140005\" clid=\"0001\">Accepted</status>\n" +
-                "    <status mid=\"84140006\" clid=\"0002\">Accepted</status>\n" +
-                "    <status mid=\"84140007\" clid=\"0003\">Accepted</status>\n" +
-                "    <status mid=\"84140008\" clid=\"0004\">Accepted</status>\n" +
-                "    <status mid=\"84140009\" clid=\"0005\">Accepted</status>\n" +
+        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+                "<report xmlns=\"http://goldetele.com/cpa\">" +
+                "<status mid=\"84140005\" clid=\"0001\">Accepted</status>" +
+                "<status mid=\"84140006\" clid=\"0002\">Accepted</status>" +
+                "<status mid=\"84140007\" clid=\"0003\">Accepted</status>" +
+                "<status mid=\"84140008\" clid=\"0004\">Accepted</status>" +
+                "<status mid=\"84140009\" clid=\"0005\">Accepted</status>" +
                 "</report>";
         return new ByteArrayInputStream(str.getBytes());
     }
