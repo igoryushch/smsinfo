@@ -35,6 +35,20 @@ public class SmsServiceUnitTestSupport {
         return result;
     }
 
+    public static List<SmsRequest> getTestFuseRequest(){
+        List<SmsRequest> result = new ArrayList<SmsRequest>(  );
+        Long i = 1L;
+        result.add( new SmsRequest( "000"+i++,"Awis","380962276147","FooBar1",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life" ),"321321312") );
+        result.get( 0 ).setSmsRequestId( i );
+        result.add( new SmsRequest( "000"+i++,"Awis","380962276147","FooBar2",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life" ),"321321313") );
+        result.get( 1 ).setSmsRequestId( i );
+        return result;
+    }
+
     public static List<SmsRequest> getTestRequestListWithIds(){
         List<SmsRequest> result = getTestRequestList();
         Long i = 1L;

@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import java.io.File;
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
@@ -25,7 +26,11 @@ public class JaxbTest {
 
     @Test
     public void testSmsRequestListWrapper() throws Exception {
-        SmsRequestListWrapper smsRequestListWrapper = new SmsRequestListWrapper( SmsServiceUnitTestSupport.getTestRequestList() );
+        List<SmsRequest> smsRequests = SmsServiceUnitTestSupport.getTestRequestList();
+        for( int i = 0; i < smsRequests.size(); i++ ) {
+            smsRequests.get( i ).setSmsRequestId( 10000 + i + 1L );
+        }
+        SmsRequestListWrapper smsRequestListWrapper = new SmsRequestListWrapper( smsRequests );
         JAXBContext jaxbContext = null;
         try {
             jaxbContext = JAXBContext.newInstance( SmsRequestListWrapper.class );

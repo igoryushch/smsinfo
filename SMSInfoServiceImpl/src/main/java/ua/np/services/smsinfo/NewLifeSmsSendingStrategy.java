@@ -39,6 +39,7 @@ public class NewLifeSmsSendingStrategy implements SmsSendingStrategy {
 
         String xmlRequest = buildXmlRequest( smsRequestList );
         HttpPost postRequest = new HttpPost( operatorHost );
+        postRequest.addHeader( "Content-Type", "text/xml; charset=UTF-8" );
         InputStream responseInputStream = operatorRestClient.sendRequest( postRequest, xmlRequest, operatorLogin, operatorPassword, operatorAuthHost );
         Map<String,String> statusMap = parseResponseStatuses(responseInputStream);
 
@@ -93,11 +94,7 @@ public class NewLifeSmsSendingStrategy implements SmsSendingStrategy {
         try {
             jaxbContext = JAXBContext.newInstance( SmsRequestListWrapper.class );
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-//            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
             StringWriter stringWriter = new StringWriter();
-            //Marshal the employees list in console
             jaxbMarshaller.marshal(smsRequestListWrapper, stringWriter);
             return stringWriter.toString();
         } catch( JAXBException e ) {
