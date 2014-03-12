@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Array>
-<Structure>
-<Value name="IDIncoming">
-<Type>String</Type>
-<Data>11111111111</Data>
-</Value>
-<Value name="IDInternal">
-<Type>String</Type>
-<Data>067363fa-07c7-11e2-891f-d4ae527baec9</Data>
-</Value>
-</Structure>
-<Structure>
-<Value name="IDIncoming">
-<Type>String</Type>
-<Data>121222222222</Data>
-</Value>
-<Value name="IDInternal">
-<Type>String</Type>
-<Data>06736403-07c7-11e2-891f-d4ae527baec9</Data>
-</Value>
-</Structure>
+    <Structure>
+        <Value name="IDIncoming">
+            <Type>String</Type>
+            <Data>11111111111</Data>
+        </Value>
+        <Value name="IDInternal">
+            <Type>String</Type>
+            <Data>067363fa-07c7-11e2-891f-d4ae527baec9</Data>
+        </Value>
+    </Structure>
+    <Structure>
+        <Value name="IDIncoming">
+            <Type>String</Type>
+            <Data>121222222222</Data>
+        </Value>
+        <Value name="IDInternal">
+            <Type>String</Type>
+            <Data>06736403-07c7-11e2-891f-d4ae527baec9</Data>
+        </Value>
+    </Structure>
 </Array>
