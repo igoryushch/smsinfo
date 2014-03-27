@@ -31,6 +31,7 @@
 
 
     <jaxws:client id="smsInfoClient" serviceClass="ua.np.services.smsinfo.SmsInfoService"
-                  address="http://localhost:8080/SMSInfoServiceImpl/smsinfo"/>
+                  address="http://localhost:9009/smsInfo"/>
+                  <!--address="http://localhost:8080/SMSInfoServiceImpl/smsinfo"/>-->
 
 </beans>
