@@ -6,11 +6,8 @@ import org.testng.annotations.Test;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.io.StringReader;
+import java.io.File;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,8 +24,8 @@ import java.util.List;
 
 public class JaxbTest {
 
-    @Test(enabled = false)
-    public void testSmsRequestListWrapperMarshall() throws Exception {
+    @Test
+    public void testSmsRequestListWrapper() throws Exception {
         List<SmsRequest> smsRequests = SmsServiceUnitTestSupport.getTestRequestList();
         for( int i = 0; i < smsRequests.size(); i++ ) {
             smsRequests.get( i ).setSmsRequestId( 10000 + i + 1L );
@@ -38,73 +35,16 @@ public class JaxbTest {
         try {
             jaxbContext = JAXBContext.newInstance( SmsRequestListWrapper.class );
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            File file = new File("F:\\Java\\IdeaProjects\\repositories-root\\services\\SMSInfo\\SMSInfoServiceImpl\\src\\test\\resources\\test.xml");
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             StringWriter stringWriter = new StringWriter();
-            jaxbMarshaller.marshal(smsRequestListWrapper, System.out);
+            //Marshal the employees list in console
+            jaxbMarshaller.marshal(smsRequestListWrapper, file);
 
         } catch( JAXBException e ) {
             e.printStackTrace();
             Assert.fail( "Exception was thrown!" );
         }
     }
-
-    @Test(enabled = true)
-    public void testSmsRequestListWrapperUnmarshall() throws Exception {
-        String xmlString = "<smsRequestListWrapper><smsRequest xmlns:ns2=\"http://goldetele.com/cpa\">\n" +
-                "    <smsRequestId>3</smsRequestId>\n" +
-                "    <incomingId>03213210321</incomingId>\n" +
-                "    <systemName>Awis</systemName>\n" +
-                "    <phoneNumber>380962276147</phoneNumber>\n" +
-                "    <messageText>FooBar</messageText>\n" +
-                "    <creationDate>2014-03-24T16:23:04.399+02:00</creationDate>\n" +
-                "    <updateDate>2014-03-24T16:23:04.399+02:00</updateDate>\n" +
-                "    <status>Pending</status>\n" +
-                "    <operator>\n" +
-                "        <name>Kyivstar</name>\n" +
-                "        <phoneCodeMaping>067</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>039</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>068</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>096</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>098</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>097</phoneCodeMaping>\n" +
-                "    </operator>\n" +
-                "</smsRequest><smsRequest xmlns:ns2=\"http://goldetele.com/cpa\">\n" +
-                "    <smsRequestId>4</smsRequestId>\n" +
-                "    <incomingId>23211654321</incomingId>\n" +
-                "    <systemName>Awis</systemName>\n" +
-                "    <phoneNumber>380962276147</phoneNumber>\n" +
-                "    <messageText>BarFoo</messageText>\n" +
-                "    <creationDate>2014-03-24T16:23:04.399+02:00</creationDate>\n" +
-                "    <updateDate>2014-03-24T16:23:04.399+02:00</updateDate>\n" +
-                "    <status>Pending</status>\n" +
-                "    <operator>\n" +
-                "        <name>Kyivstar</name>\n" +
-                "        <phoneCodeMaping>067</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>039</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>068</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>096</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>098</phoneCodeMaping>\n" +
-                "        <phoneCodeMaping>097</phoneCodeMaping>\n" +
-                "    </operator>\n" +
-                "</smsRequest></smsRequestListWrapper>";
-
-        JAXBContext jc = null;
-        List<SmsRequest> result = new ArrayList<>(  );
-        try {
-            jc = JAXBContext.newInstance( SmsRequestListWrapper.class );
-            Unmarshaller jaxbUnmarshaller = jc.createUnmarshaller();
-            SmsRequestListWrapper requestListWrapper = (SmsRequestListWrapper) jaxbUnmarshaller.unmarshal( new StreamSource( new StringReader( xmlString ) ) );
-            Assert.assertNotNull( requestListWrapper );
-            result = requestListWrapper.getRequestList();
-            Assert.assertEquals( result.size(),2 );
-        } catch( JAXBException e ) {
-
-            e.printStackTrace();
-            Assert.fail( "Exception was thrown!" );
-        }
-
-    }
-
-
 }

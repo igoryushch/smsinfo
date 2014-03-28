@@ -26,7 +26,7 @@ public class SmsInfoServiceClientIT extends AbstractTestNGSpringContextTests{
     @Qualifier(value = "smsInfoClient")
     private SmsInfoService smsInfoClient;
 
-    @Test(enabled = true)
+    @Test(enabled = false)
     public void testWSInteraction(){
         Assert.assertNotNull( smsInfoClient );
         String response = smsInfoClient.sendMessages( SmsInfoServiceITUtils.buildRequestStringFromSystem(), "Awis" );

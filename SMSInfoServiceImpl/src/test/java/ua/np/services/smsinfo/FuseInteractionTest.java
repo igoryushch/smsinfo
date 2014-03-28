@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class FuseInteractionTest {
 
-    @Test(enabled = false)
+    @Test
     public void testSendRequest() {
 
         List<SmsRequest> smsRequestList = SmsServiceUnitTestSupport.getTestFuseRequest();
