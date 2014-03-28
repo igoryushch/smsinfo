@@ -7,6 +7,8 @@ import org.testng.annotations.Test;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.*;
  * Date: 15.01.14
  */
 
-public class OrderDaoUnitTest {
+public class OperatorDaoUnitTest {
 
     private EntityManager mockEntityManager;
     private OperatorDaoImpl operatorDao;
@@ -37,50 +39,45 @@ public class OrderDaoUnitTest {
     }
 
     @Test
-    public void testGetOperatorByPhoneCode(){
+    public void testGetOperatorByName() throws Exception {
         // mocks & inits
-        String queryName = "findByPhoneCode";
+        String queryName = "findByName";
         Operator expectedOperator = SmsServiceUnitTestSupport.newOperator( "Life" );
 
         // expectations
         when( mockEntityManager.createNamedQuery( queryName, Operator.class) ).thenReturn( mockQuery );
-        when( mockQuery.setParameter( "code", "063")).thenReturn( mockQuery );
+        when( mockQuery.setParameter( "name", expectedOperator.getName().toLowerCase() )).thenReturn( mockQuery );
         when( mockQuery.getResultList() ).thenReturn( Arrays.asList( expectedOperator ) );
 
-        Operator actualOperator = operatorDao.getOperatorByPhoneCode( "063" );
+        // logic
+        Operator actualOperator = operatorDao.getOperatorByName( expectedOperator.getName() );
 
         // verifications
         verify(mockEntityManager, times(1)).createNamedQuery( queryName, Operator.class );
-        verify(mockQuery, times(1)).setParameter( "code", "063" );
+        verify(mockQuery, times(1)).setParameter( "name", expectedOperator.getName().toLowerCase() );
         verify(mockQuery, times(1)).getResultList();
         verifyNoMoreInteractions(mockEntityManager, mockQuery);
 
         // assertions
         Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
-        Assert.assertNotNull( actualOperator.getPhoneCodeMaping());
     }
 
     @Test
-    public void testGetDefaultOperator(){
-        // mocks & inits
-        String queryName = "findByPhoneCode";
-        Operator expectedOperator = SmsServiceUnitTestSupport.newOperator( "Life" );
-
+    public void testFindAll() throws Exception {
+        String queryName = "findAll";
         // expectations
-        when( mockEntityManager.createNamedQuery( queryName, Operator.class) ).thenReturn( mockQuery );
-        when( mockQuery.setParameter( "code", "000")).thenReturn( mockQuery );
-        when( mockQuery.getResultList() ).thenReturn( Arrays.asList( expectedOperator ) );
+        when(mockEntityManager.createNamedQuery(queryName, Operator.class)).thenReturn(mockQuery);
+        when(mockQuery.getResultList()).thenReturn( Collections.<Operator>emptyList());
 
-        Operator actualOperator = operatorDao.getDefaultOperator();
+        // logic
+        List<Operator> operatorList = operatorDao.findAll();
 
         // verifications
-        verify(mockEntityManager, times(1)).createNamedQuery( queryName, Operator.class );
-        verify(mockQuery, times(1)).setParameter( "code", "000" );
+        verify(mockEntityManager, times(1)).createNamedQuery(queryName, Operator.class);
         verify(mockQuery, times(1)).getResultList();
         verifyNoMoreInteractions(mockEntityManager, mockQuery);
 
         // assertions
-        Assert.assertEquals( actualOperator.getName(), expectedOperator.getName() );
-        Assert.assertNotNull( actualOperator.getPhoneCodeMaping());
+        Assert.assertSame(operatorList, Collections.<Operator>emptyList());
     }
 }

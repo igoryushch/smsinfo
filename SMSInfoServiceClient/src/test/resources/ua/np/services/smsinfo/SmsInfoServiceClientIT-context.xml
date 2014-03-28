@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+
+    <!--<import resource="classpath:META-INF/cxf/cxf.xml" />-->
+    <!--<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />-->
+    <!--<import resource="classpath:META-INF/applicationContext-cxf.xml"/>-->
+
+    <!--<bean id="dataSource"-->
+    <!--class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+    <!--<property name="driverClassName">-->
+    <!--<value>${dataSource.driverClassName}</value>-->
+    <!--</property>-->
+    <!--<property name="url">-->
+    <!--<value>${dataSource.url}</value>-->
+    <!--</property>-->
+    <!--<property name="username">-->
+    <!--<value>${dataSource.username}</value>-->
+    <!--</property>-->
+    <!--<property name="password">-->
+    <!--<value>${dataSource.password}</value>-->
+    <!--</property>-->
+    <!--</bean>-->
+
+    <!--<context:property-placeholder-->
+    <!--location="dev.smsinfoservice.properties,classpath:META-INF/dev.operatorsGateway.properties,classpath:META-INF/dev.proxySettings.properties"/>-->
+
+
+    <jaxws:client id="smsInfoClient" serviceClass="ua.np.services.smsinfo.SmsInfoService"
+                  address="http://localhost:8080/SMSInfoServiceImpl/smsinfo"/>
+
+</beans>

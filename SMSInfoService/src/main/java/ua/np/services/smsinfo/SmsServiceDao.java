@@ -17,10 +17,15 @@ import java.util.Map;
 
 public interface SmsServiceDao {
 
-    public void addRequests(List <SmsRequest> requests);
+    public List <SmsRequest> addRequests(List <SmsRequest> requests);
 
     public List<SmsRequest> getRequestsForSystem(String systemName);
 
-    public void updateStatuses(Map<String,String> statusMapByOperatorId);
+    public List<SmsRequest> getMessagesToSend();
 
+    public void updateStatuses( Map<String, String> statusMap );
+
+    public void updateStatuses( Map<String, String> statusMap, Operator operator );
+
+    public List<SmsRequest> mergeMessages(List <SmsRequest> requests);
 }

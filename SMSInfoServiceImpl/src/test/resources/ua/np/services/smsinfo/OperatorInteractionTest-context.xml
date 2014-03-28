@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="proxySettings.properties,operatorGateway.properties"/>
+    <bean id="proxySettingsHolder" class="ua.np.services.smsinfo.ProxySettingsHolder" >
+        <property name="proxyHost" value="${proxy.host}"/>
+        <property name="proxyPort" value="${proxy.port}"/>
+        <property name="proxyUsername" value="${proxy.username}"/>
+        <property name="proxyPassword" value="${proxy.password}"/>
+    </bean>
+
+</beans>

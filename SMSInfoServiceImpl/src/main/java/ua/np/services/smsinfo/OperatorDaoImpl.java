@@ -25,17 +25,15 @@ public class OperatorDaoImpl implements OperatorDao {
     }
 
     @Override
-    public Operator getOperatorByPhoneCode(String phoneCode){
-        List<Operator> resultList = entityManager.createNamedQuery( "findByPhoneCode",Operator.class ).setParameter( "code", phoneCode ).getResultList();
-        if( resultList.isEmpty() ) return getDefaultOperator();
+    public Operator getOperatorByName( String name ) {
+        List<Operator> resultList = entityManager.createNamedQuery( "findByName",Operator.class ).setParameter( "name", name.toLowerCase() ).getResultList();
+        if( resultList.isEmpty() ) return null;
         return resultList.get( 0 );
     }
 
     @Override
-    public Operator getDefaultOperator(){
-        List<Operator> resultList = entityManager.createNamedQuery( "findByPhoneCode",Operator.class ).setParameter( "code", "000" ).getResultList();
-        if( resultList.isEmpty() ) return null;
-        return resultList.get( 0 );
+    public List<Operator> findAll() {
+        return entityManager.createNamedQuery( "findAll",Operator.class ).getResultList();
     }
 
 }

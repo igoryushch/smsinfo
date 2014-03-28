@@ -18,13 +18,12 @@ import javax.jws.WebService;
 @WebService
 public interface SmsInfoService {
 
-    @WebMethod
-    public String sendMessages (@WebParam(name = "xml")String xml, @WebParam(name = "systemName") String systemName);
+    @WebMethod(operationName = "sendMessages")
+    public String sendMessages( @WebParam(name = "xml") String xml, @WebParam(name = "systemName") String systemName );
+
+    @WebMethod(operationName = "getDeliveryStatusData")
+    public String reportDeliveryData( @WebParam(name = "systemName") String systemName );
 
     @WebMethod
-    public String getDeliveryStatusData ( @WebParam(name = "systemName") String systemName );
-
-    @WebMethod
-    public String updateStatuses ( @WebParam(name = "operatorName") String operatorName, @WebParam(name = "statusData") String statusData );
-
+    public void updateStatuses( SmsRequestListWrapper requestList );
 }

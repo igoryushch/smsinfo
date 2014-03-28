@@ -1,6 +1,9 @@
 package ua.np.services.smsinfo;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Calendar;
 
 /**
@@ -14,28 +17,30 @@ import java.util.Calendar;
  * Date: 09.01.14
  */
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @NamedQueries(
         {
-                @NamedQuery(name = "findById", query = "SELECT sr FROM SmsRequest sr WHERE sr.id = :id"),
+                @NamedQuery(name = "findById", query = "SELECT sr FROM SmsRequest sr WHERE sr.smsRequestId = :id"),
                 @NamedQuery(name = "findByIncomingId", query = "SELECT sr FROM SmsRequest sr WHERE sr.incomingId = :incomingId"),
-                @NamedQuery(name = "findBySystemName", query = "SELECT sr FROM SmsRequest sr WHERE sr.sytemName = :sytemName"),
-                @NamedQuery(name = "findBySystemNameAndDate", query = "SELECT sr FROM SmsRequest sr WHERE sr.sytemName = :sytemName and (sr.creationDate between :startDate and :endDate)"),
+                @NamedQuery(name = "findBySystemName", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName"),
+                @NamedQuery(name = "findBySystemNameAndDate", query = "SELECT sr FROM SmsRequest sr WHERE sr.systemName = :systemName and (sr.creationDate between :startDate and :endDate)"),
                 @NamedQuery(name = "findByStatus", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :status"),
-                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operatorId = :operatorId"),
-                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operatorId in :operatorIdList"),
-                @NamedQuery(name = "findPendingRequests", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :statusPending and sr.creationDate > :currentDateTime")
+                @NamedQuery(name = "findByOperatorId", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.operatorId = :operatorId"),
+                @NamedQuery(name = "findByOperatorIdList", query = "SELECT sr FROM SmsRequest sr WHERE sr.operator.operatorId in :operatorIdList"),
+                @NamedQuery(name = "findPendingRequests", query = "SELECT sr FROM SmsRequest sr WHERE sr.status = :statusPending")
         })
 public class SmsRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long smsRequestId;
 
     @Column(nullable = false)
     private String incomingId;
     @Column(nullable = false)
-    private String sytemName;
+    private String systemName;
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
@@ -50,14 +55,13 @@ public class SmsRequest {
     @JoinColumn(name="operatorId")
     private Operator operator;
     private String operatorMessageId;
-    private String operatorStatus;
 
     public SmsRequest() {
     }
 
-    public SmsRequest( String incomingId, String sytemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId, String operatorStatus ) {
+    public SmsRequest( String incomingId, String systemName, String phoneNumber, String messageText, Calendar creationDate, Calendar updateDate, String status, Operator operator, String operatorMessageId ) {
         this.incomingId = incomingId;
-        this.sytemName = sytemName;
+        this.systemName = systemName;
         this.phoneNumber = phoneNumber;
         this.messageText = messageText;
         this.creationDate = creationDate;
@@ -65,15 +69,14 @@ public class SmsRequest {
         this.status = status;
         this.operator = operator;
         this.operatorMessageId = operatorMessageId;
-        this.operatorStatus = operatorStatus;
     }
 
-    public Long getId() {
-        return id;
+    public Long getSmsRequestId() {
+        return smsRequestId;
     }
 
-    public void setId( Long id ) {
-        this.id = id;
+    public void setSmsRequestId( Long id ) {
+        this.smsRequestId = id;
     }
 
     public String getIncomingId() {
@@ -84,12 +87,12 @@ public class SmsRequest {
         this.incomingId = incomingId;
     }
 
-    public String getSytemName() {
-        return sytemName;
+    public String getSystemName() {
+        return systemName;
     }
 
-    public void setSytemName( String sytemName ) {
-        this.sytemName = sytemName;
+    public void setSystemName( String systemName ) {
+        this.systemName = systemName;
     }
 
     public String getPhoneNumber() {
@@ -97,7 +100,10 @@ public class SmsRequest {
     }
 
     public void setPhoneNumber( String phoneNumber ) {
-        this.phoneNumber = phoneNumber;
+        if( phoneNumber.length() == 10 )
+            this.phoneNumber = "38" + phoneNumber;
+        else
+            this.phoneNumber = phoneNumber;
     }
 
     public String getMessageText() {
@@ -146,13 +152,5 @@ public class SmsRequest {
 
     public void setOperatorMessageId( String operatorMessageId ) {
         this.operatorMessageId = operatorMessageId;
-    }
-
-    public String getOperatorStatus() {
-        return operatorStatus;
-    }
-
-    public void setOperatorStatus( String operatorStatus ) {
-        this.operatorStatus = operatorStatus;
     }
 }

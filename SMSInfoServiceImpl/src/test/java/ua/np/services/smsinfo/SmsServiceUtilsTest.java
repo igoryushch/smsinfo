@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.Mockito.*;
-
 /**
  * Copyright (C) 2014 Nova Poshta. All rights reserved.
  * http://novaposhta.ua/
@@ -30,8 +28,6 @@ public class SmsServiceUtilsTest {
     @BeforeMethod
     public void setUp() {
         smsServiceUtils = new SmsServiceUtils();
-        mockedOperatorDao = mock( OperatorDao.class );
-        smsServiceUtils.setOperatorDao( mockedOperatorDao );
     }
 
     @Test
@@ -54,9 +50,9 @@ public class SmsServiceUtilsTest {
 
     @DataProvider(name = "requestParamsProvider")
     public static Object[][] requestParams(){
-        return new Object[][] { { "111111", "1C", "063", "0631234567", "Foo"}, { "222222", "1C","067", "0671234567", "Bar" },
-                                { "333333", "Awis","068", "0681234567", "FooBar" },{ "444444", "Awis","069", "0691234567", "BarFoo" },
-                                { "555555", "loyalty","095", "0951234567", "Foo" },{ "666666", "loyalty","096", "0961234567", "Foo" } };
+        return new Object[][] { { "111111", "1C", "063", "380631234567", "Foo"}, { "222222", "1C","067", "380671234567", "Bar" },
+                                { "333333", "Awis","068", "380681234567", "FooBar" },{ "444444", "Awis","069", "380691234567", "BarFoo" },
+                                { "555555", "loyalty","095", "380951234567", "Foo" },{ "666666", "loyalty","096", "380961234567", "Foo" } };
     }
 
     @Test(dataProvider = "requestParamsProvider")
@@ -67,15 +63,12 @@ public class SmsServiceUtilsTest {
         params.put( "phone", phoneNumber );
         params.put( "text", messageText );
 
-        when( mockedOperatorDao.getOperatorByPhoneCode( phoneCode ) ).thenReturn( SmsServiceUnitTestSupport.newOperator( "Life" ) );
-
         SmsRequest request = smsServiceUtils.buildNewSmsRequest( params, systemName );
         Assert.assertEquals( request.getIncomingId(), incomingId );
-        Assert.assertEquals( request.getSytemName(), systemName );
+        Assert.assertEquals( request.getSystemName(), systemName );
         Assert.assertEquals( request.getPhoneNumber(), phoneNumber );
         Assert.assertEquals( request.getMessageText(), messageText );
         Assert.assertNotNull( request.getCreationDate() );
-        Assert.assertNotNull( request.getOperator() );
         Assert.assertNotNull( request.getStatus() );
         Assert.assertNotNull( request.getUpdateDate() );
     }
@@ -83,13 +76,6 @@ public class SmsServiceUtilsTest {
     @Test
     public void testGetInitialStatus(){
         Assert.assertEquals( smsServiceUtils.getInitialStatus(), "Pending" );
-    }
-
-    @Test
-    public void testResolveOperator(){
-        when( mockedOperatorDao.getOperatorByPhoneCode( "063" ) ).thenReturn( SmsServiceUnitTestSupport.newOperator( "Life" ) );
-        Assert.assertEquals( smsServiceUtils.resolveOperator( "0631234567" ).getName(),"Life" );
-        verify( mockedOperatorDao, times( 1 ) ).getOperatorByPhoneCode( "063" );
     }
 
     @Test

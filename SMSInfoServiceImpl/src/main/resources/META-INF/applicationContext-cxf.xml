@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+">
+
+    <import resource="applicationContext.xml"/>
+
+    <jaxws:endpoint id="smsInfoServiceWsServer"
+                  implementorClass="ua.np.services.smsinfo.SmsInfoServiceImpl"
+                  implementor="#smsInfoService"
+                  address="${smsInfoServiceWsServer.address}">
+    </jaxws:endpoint>
+
+    <jaxws:client id="smsInfoClient" serviceClass="ua.np.services.smsinfo.SmsInfoService"
+                  address="${smsInfoServiceWsClient.address}"/>
+
+</beans>

@@ -21,12 +21,6 @@ import java.util.*;
 
 public class SmsServiceUtils {
 
-    private OperatorDao operatorDao;
-
-    public void setOperatorDao( OperatorDao operatorDao ) {
-        this.operatorDao = operatorDao;
-    }
-
     public List<SmsRequest> getRequestsFromXmlString(String xmlString, String systemName){
 
         List<Map<String,String>> messages = getMessageParams( xmlString );
@@ -43,12 +37,11 @@ public class SmsServiceUtils {
 
         SmsRequest request = new SmsRequest(  );
         request.setIncomingId( messageRequest.get( "id" ) );
-        request.setSytemName( systemName );
+        request.setSystemName( systemName );
         request.setPhoneNumber( messageRequest.get( "phone" ) );
         request.setMessageText( messageRequest.get( "text" ) );
         request.setCreationDate( new GregorianCalendar(  ) );
         request.setUpdateDate( new GregorianCalendar() );
-        request.setOperator( resolveOperator( messageRequest.get( "phone" ) ) );
         request.setStatus( getInitialStatus() );
 
         return request;
@@ -56,10 +49,6 @@ public class SmsServiceUtils {
 
     public String getInitialStatus(){
         return "Pending";
-    }
-
-    public Operator resolveOperator( String phoneNumber ){
-        return operatorDao.getOperatorByPhoneCode( getPhoneCodeFromNumber(phoneNumber) ) ;
     }
 
     public String getPhoneCodeFromNumber(String phoneNumber){
@@ -73,7 +62,7 @@ public class SmsServiceUtils {
         String template = "<Value name=\"IDIncoming\"><Type>String</Type><Data>{0}</Data></Value><Value name=\"IDInternal\"><Type>String</Type><Data>{1}</Data></Value>";
 
         for (SmsRequest request : smsRequests){
-            sb.append( template.replace( "{0}", request.getIncomingId() ).replace( "{1}", String.valueOf( request.getId() ) ) );
+            sb.append( template.replace( "{0}", request.getIncomingId() ).replace( "{1}", String.valueOf( request.getSmsRequestId() ) ) );
         }
 
         sb.append( "</Structure></Array>" );
@@ -88,7 +77,7 @@ public class SmsServiceUtils {
         String template = "<Row><Value name=\"IdInternal\"><Type>String</Type><Data>{0}</Data></Value><Value name=\"CurrentStatus\"><Type>String</Type><Data>{1}</Data></Value></Row>";
 
         for (SmsRequest request : smsRequests){
-            sb.append( template.replace( "{0}",request.getIncomingId()).replace( "{1}",request.getOperatorStatus() ) );
+            sb.append( template.replace( "{0}",request.getIncomingId()).replace( "{1}",request.getStatus()) );
         }
 
         sb.append( "</Rows></ValueTable></Structure>" );

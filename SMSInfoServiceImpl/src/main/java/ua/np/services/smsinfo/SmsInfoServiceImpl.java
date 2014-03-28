@@ -1,5 +1,6 @@
 package ua.np.services.smsinfo;
 
+import javax.jws.WebService;
 import java.util.List;
 
 /**
@@ -13,13 +14,14 @@ import java.util.List;
  * Date: 10.01.14
  */
 
-public class SmsInfoServiceImpl implements SmsInfoService{
+@WebService(endpointInterface = "ua.np.services.smsinfo.SmsInfoService", serviceName = "SmsInfoPort")
+public class SmsInfoServiceImpl implements SmsInfoService {
 
-    private SmsServiceDao smsServiceDao;
+    private SmsService smsService;
     private SmsServiceUtils smsServiceUtils;
 
-    public void setSmsServiceDao( SmsServiceDao smsServiceDao ) {
-        this.smsServiceDao = smsServiceDao;
+    public void setSmsService( SmsService smsService ) {
+        this.smsService = smsService;
     }
 
     public void setSmsServiceUtils( SmsServiceUtils smsServiceUtils ) {
@@ -29,18 +31,34 @@ public class SmsInfoServiceImpl implements SmsInfoService{
     @Override
     public String sendMessages( String xml, String systemName ) {
         List<SmsRequest> smsRequests = smsServiceUtils.getRequestsFromXmlString( xml, systemName );
-        smsServiceDao.addRequests( smsRequests );
-
+        smsService.saveRequests( smsRequests );
         return smsServiceUtils.buildAcceptedResponse( smsRequests );
     }
 
+
     @Override
-    public String getDeliveryStatusData( String systemName ) {
-        return smsServiceUtils.buildDeliveryStatusResponse(smsServiceDao.getRequestsForSystem( systemName ));
+    public String reportDeliveryData( String systemName ) {
+        List<SmsRequest> requestsForSystem = smsService.getRequestsForSystem( systemName );
+        return smsServiceUtils.buildDeliveryStatusResponse( requestsForSystem );
     }
 
     @Override
-    public String updateStatuses( String operatorName, String statusData ) {
-        return null;
+    public void updateStatuses( SmsRequestListWrapper requestList ) {
+
+          smsService.updateRequests( requestList.getRequestList() );
+
+//        Map<String, String> updateParams = new HashMap<>(  );
+//
+//        for(UpdateItem updateItem : updateRequest.getItemList()){
+//            updateParams.put( updateItem.getMessageId(), updateItem.getMessageStatus() );
+//        }
+//
+//        if( updateParams.size() > 0 ){
+//            if( operatorName == null ){
+//                smsService.updateRequests( updateParams );
+//            } else {
+//                smsService.updateRequests( updateParams, operatorName );
+//            }
+//        }
     }
 }

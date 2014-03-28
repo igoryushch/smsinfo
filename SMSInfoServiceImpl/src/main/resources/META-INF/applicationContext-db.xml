@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+    <bean id="dataSource"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName">
+            <value>${dataSource.driverClassName}</value>
+        </property>
+        <property name="url">
+            <value>${dataSource.url}</value>
+        </property>
+        <property name="username">
+            <value>${dataSource.username}</value>
+        </property>
+        <property name="password">
+            <value>${dataSource.password}</value>
+        </property>
+    </bean>
+
+</beans>

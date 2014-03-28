@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-lazy-init="true"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+">
+
+
+    <bean id="jaxbContext" class="javax.xml.bind.JAXBContext" factory-method="newInstance">
+        <constructor-arg>
+            <list>
+                <value>ua.np.services.smsinfo.KyivstarAcceptanceResponse</value>
+                <value>ua.np.services.smsinfo.ObjectFactory</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <bean id="operatorRsClient" class="ua.np.services.smsinfo.OperatorRestClientImpl">
+        <property name="proxyHost" value="${proxy.host}"/>
+        <property name="proxyPort" value="${proxy.port}"/>
+        <property name="proxyUsername" value="${proxy.username}"/>
+        <property name="proxyPassword" value="${proxy.password}"/>
+    </bean>
+
+    <bean id="operatorRsNoProxyClient" class="ua.np.services.smsinfo.OperatorRestClientNoProxyImpl"/>
+
+    <util:map id="operator2smsSendingStrategy"
+              key-type="java.lang.String"
+              value-type="ua.np.services.smsinfo.SmsSendingStrategy">
+        <entry key="Kyivstar">
+            <bean class="ua.np.services.smsinfo.KyivstarSmsSendingStrategy">
+                <property name="operatorHost" value="${kyivstar.host}"/>
+                <property name="operatorLogin" value="${kyivstar.hostUser}"/>
+                <property name="operatorPassword" value="${kyivstar.hostPassword}"/>
+                <property name="jaxbUnmarshaller">
+                    <bean factory-bean="jaxbContext" factory-method="createUnmarshaller"/>
+                </property>
+                <!--<property name="operatorRestClient" ref="operatorRsClient"/>-->
+                <property name="operatorRestClient" ref="operatorRsNoProxyClient"/>
+            </bean>
+        </entry>
+        <entry key="Life">
+            <!--<bean class="ua.np.services.smsinfo.LifeSmsSendingStrategy">-->
+                <!--<property name="operatorHost" value="${life.host}"/>-->
+                <!--<property name="operatorAuthHost" value="${life.authHost}"/>-->
+                <!--<property name="operatorLogin" value="${life.hostUser}"/>-->
+                <!--<property name="operatorPassword" value="${life.hostPassword}"/>-->
+                <!--<property name="operatorRestClient" ref="operatorRsClient"/>-->
+            <!--</bean>-->
+            <bean class="ua.np.services.smsinfo.NewLifeSmsSendingStrategy">
+                <property name="operatorHost" value="${life.newHost}"/>
+                <property name="operatorAuthHost" value="${life.newAuthHost}"/>
+                <property name="operatorLogin" value="${life.newHostUser}"/>
+                <property name="operatorPassword" value="${life.newHostPassword}"/>
+                <property name="operatorRestClient" ref="operatorRsNoProxyClient"/>
+            </bean>
+        </entry>
+    </util:map>
+
+    <bean id="smsSendingJob" class="ua.np.services.smsinfo.SmsSendingRunnableJob">
+        <property name="smsInfoServiceClient" ref="smsInfoClient"/>
+        <property name="operatorService" ref="operatorService"/>
+        <property name="smsServiceUtils" ref="smsServiceUtils"/>
+        <property name="smsService" ref="smsService"/>
+        <property name="maxSmsCountPerReqest" value="50"/>
+        <property name="operator2StrategyMap" ref="operator2smsSendingStrategy"/>
+    </bean>
+
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="applicationContextSchedulerContextKey" value="applicationContext"/>
+        <property name="triggers">
+            <list>
+                <bean class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+                    <!-- see the example of method invoking job above -->
+                    <property name="name" value="smsSendingTrigger"/>
+                    <property name="jobDetail">
+                        <!-- New Clusterable Definition: note, the proxy is used now. -->
+                        <bean class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+                            <property name="beanName" value="smsSendingJobDetail"/>
+                            <property name="name" value="smsSendingJob"/>
+                            <property name="durability" value="true"/>
+                            <property name="jobClass" value="ua.np.services.smsinfo.DelegatingQuartzJob"/>
+                            <property name="jobDataAsMap">
+                                <map>
+                                    <entry key="runnableBeanName" value="smsSendingJob"/>
+                                </map>
+                            </property>
+                        </bean>
+                    </property>
+                    <!-- 5 seconds -->
+                    <property name="startDelay" value="5000"/>
+                    <!-- repeat every 30 seconds -->
+                    <property name="cronExpression" value="*/30 * * * * ?"/>
+                </bean>
+            </list>
+        </property>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.scheduler.instanceName">InstanceNameX</prop>
+                <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+                <prop key="org.quartz.threadPool.threadCount">3</prop>
+                <prop key="org.quartz.threadPool.threadPriority">5</prop>
+                <prop key="org.quartz.jobStore.misfireThreshold">60000</prop>
+                <prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+                <prop key="org.quartz.jobStore.useProperties">false</prop>
+                <prop key="org.quartz.jobStore.dataSource">myDS</prop>
+                <prop key="org.quartz.jobStore.tablePrefix">QRTZ_</prop>
+                <prop key="org.quartz.jobStore.isClustered">true</prop>
+                <prop key="org.quartz.jobStore.clusterCheckinInterval">20000</prop>
+                <prop key="org.quartz.dataSource.myDS.driver">com.mysql.jdbc.Driver</prop>
+                <prop key="org.quartz.dataSource.myDS.URL">jdbc:mysql://localhost:3306/quartzjobDB</prop>
+                <prop key="org.quartz.dataSource.myDS.user">root</prop>
+                <prop key="org.quartz.dataSource.myDS.password">mysql</prop>
+                <prop key="org.quartz.dataSource.myDS.maxConnections">5</prop>
+                <prop key="org.quartz.dataSource.myDS.validationQuery">select 0 from dual</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>

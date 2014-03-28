@@ -19,12 +19,42 @@ import java.util.*;
 
 public class SmsServiceUnitTestSupport {
 
+    public static SmsRequest getTestRequest(){
+        return new SmsRequest( "0001","Awis","0671234567","FooBar",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life:)" ),"321321312");
+    }
+
     public static List<SmsRequest> getTestRequestList(){
         List<SmsRequest> result = new ArrayList<SmsRequest>(  );
         for( int i = 1; i < 6;i++ ){
             result.add( new SmsRequest( "000"+i,"Awis","0671234567","FooBar",
                     new GregorianCalendar(  ),new GregorianCalendar(  ),
-                    "Pending",newOperator( "Life:)" ),"321321312","") );
+                    "Pending",newOperator( "Life:)" ),"321321312") );
+        }
+        return result;
+    }
+
+    public static List<SmsRequest> getTestFuseRequest(){
+        List<SmsRequest> result = new ArrayList<SmsRequest>(  );
+        Long i = 1L;
+        result.add( new SmsRequest( "000"+i++,"Awis","0962276147","FooBar1",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life" ),"321321312") );
+        result.get( 0 ).setSmsRequestId( i );
+        result.add( new SmsRequest( "000"+i++,"Awis","0962276147","FooBar2",
+                new GregorianCalendar(  ),new GregorianCalendar(  ),
+                "Pending",newOperator( "Life" ),"321321313") );
+        result.get( 1 ).setSmsRequestId( i );
+        return result;
+    }
+
+    public static List<SmsRequest> getTestRequestListWithIds(){
+        List<SmsRequest> result = getTestRequestList();
+        Long i = 1L;
+        for( SmsRequest smsRequest : result ){
+            smsRequest.setSmsRequestId( i );
+            i++;
         }
         return result;
     }
@@ -41,7 +71,46 @@ public class SmsServiceUnitTestSupport {
     }
 
     public static String getInternalTestRequestForUtils(){
-        return getXmlAsString( "SMSInfoServiceImpl\\src\\test\\resources\\sendRequest.xml" ).trim();
+        
+        String str = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                "<Structure>" +
+                "<Value name=\"operation\">" +
+                "<Type>String</Type>" +
+                "<Data>sendMessages</Data>" +
+                "</Value>" +
+                "<Array name=\"messageArray\">" +
+                "<Structure>" +
+                "<Value name=\"id\">" +
+                "<Type>String</Type>" +
+                "<Data>11111111111</Data>" +
+                "</Value>" +
+                "<Value name=\"phone\">" +
+                "<Type>String</Type>" +
+                "<Data>0661234567</Data>" +
+                "</Value>" +
+                "<Value name=\"text\">" +
+                "<Type>String</Type>" +
+                "<Data>FooBar</Data>" +
+                "</Value>" +
+                "</Structure>" +
+                "<Structure>" +
+                "<Value name=\"id\">" +
+                "<Type>String</Type>" +
+                "<Data>121222222222</Data>" +
+                "</Value>" +
+                "<Value name=\"phone\">" +
+                "<Type>String</Type>" +
+                "<Data>0671234567</Data>" +
+                "</Value>" +
+                "<Value name=\"text\">" +
+                "<Type>String</Type>" +
+                "<Data>BarFoo</Data>" +
+                "</Value>" +
+                "</Structure>" +
+                "</Array>" +
+                "</Structure>";
+        
+        return str;
     }
 
     public static String buildAcceptedResponseTest(){
@@ -59,12 +128,12 @@ public class SmsServiceUnitTestSupport {
     public static List<SmsRequest> getExpectedRequestList(){
 
         return Arrays.asList(
-                new SmsRequest( "11111111111", "1C", "0661234567", "FooBar",
+                new SmsRequest( "11111111111", "1C", "380661234567", "FooBar",
                                 new GregorianCalendar(), new GregorianCalendar(),
-                                "Pending", newOperator( "Life:)" ), "321321312","" ),
-                new SmsRequest( "121222222222", "1C", "0671234567", "BarFoo",
+                                "Pending", newOperator( "Life:)" ), "321321312" ),
+                new SmsRequest( "121222222222", "1C", "380671234567", "BarFoo",
                                 new GregorianCalendar(), new GregorianCalendar(),
-                                "Pending", newOperator( "Life:)" ), "321321313","" ) );
+                                "Pending", newOperator( "Life:)" ), "321321313" ) );
     }
 
     private static String getXmlAsString(String filePath){
@@ -73,7 +142,7 @@ public class SmsServiceUnitTestSupport {
             Scanner scanner = new Scanner( new FileInputStream(new File(filePath)) );
             StringBuilder sb = new StringBuilder(  );
             while( scanner.hasNext() ){
-                sb.append( scanner.nextLine().replaceAll( "\n", "" ).replaceAll( "\r", "" ).replaceAll( "\t", "" ) );
+                sb.append( scanner.nextLine().replaceAll( "", "" ).replaceAll( "\r", "" ).replaceAll( "", "" ) );
             }
             return sb.toString();
 
@@ -86,7 +155,7 @@ public class SmsServiceUnitTestSupport {
     public static List<SmsRequest> getTestSmsRequestList(){
         return Arrays.asList(
                 new SmsRequest( "1010101", "1C", "0991112233", "FooBar",
-                        new GregorianCalendar(  ), new GregorianCalendar(  ), "Pending",newOperator( "Life:)" ),"","Delivered")
+                        new GregorianCalendar(  ), new GregorianCalendar(  ), "Delivered",newOperator( "Life:)" ),"")
         );
     }
 
@@ -113,6 +182,19 @@ public class SmsServiceUnitTestSupport {
         sb.append( "<Row><Value name=\"IdInternal\"><Type>String</Type><Data>" + incomingId + "</Data></Value><Value name=\"CurrentStatus\"><Type>String</Type><Data>" + status + "</Data></Value></Row>");
         sb.append( "</Rows></ValueTable></Structure>" );
         return sb.toString();
+    }
+
+    public static Map<String, String> getTestStatusMap() {
+
+        Map<String, String> result = new HashMap<>(  );
+        result.put( "01233213321", "Delivered" );
+        result.put( "01233267461", "Error" );
+
+        return result;
+    }
+
+    public static Operator getTestOperator(){
+        return new Operator( "Life" );
     }
 
     public static void checkAssertions(Map<String, String> param, String expectedId, String expectedText, String expectedPhone){

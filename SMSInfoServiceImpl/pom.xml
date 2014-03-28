@@ -10,7 +10,6 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>ua.np.services</groupId>
     <artifactId>SMSInfoServiceImpl</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>SMSInfoServiceImpl</name>
@@ -20,7 +19,7 @@
         <dependency>
             <groupId>ua.np.services</groupId>
             <artifactId>SMSInfoService</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -38,11 +37,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>3.2.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
+            <artifactId>spring-web</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -51,28 +50,32 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>3.2.5.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>3.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>3.2.5.RELEASE</version>
         </dependency>
+
+        <!--Quartz need this-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>3.2.5.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
         </dependency>
         <!-- END: Spring Framework -->
 
@@ -92,14 +95,14 @@
         <!-- END: Apache CXF -->
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.3.1</version>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpmime</artifactId>
+            <artifactId>httpclient</artifactId>
             <version>4.3.1</version>
         </dependency>
 
@@ -113,13 +116,7 @@
         <!--Hibernate-->
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>4.2.7.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.7.Final</version>
         </dependency>
 
         <!--Database-->
@@ -160,6 +157,14 @@
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>6.1.26</version>
             </plugin>
+            <!--<plugin>-->
+                <!--<groupId>org.apache.tomcat.maven</groupId>-->
+                <!--<artifactId>tomcat7-maven-plugin</artifactId>-->
+                <!--<version>2.3-SNAPSHOT</version>-->
+                <!--<configuration>-->
+                    <!--<ignorePackaging>true</ignorePackaging>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
